@@ -1,0 +1,30 @@
+# Board types shown on the home page.
+#
+# Only Apps is built. The rest are listed so the shape of the board is visible,
+# and so adding one is a matter of setting built: true rather than redesigning
+# the home page.
+
+- slug: apps
+  label: Apps
+  question: Will my apps work, and is it fixable
+  blurb: Browse by country and type. Every app carries a status, a reason, and whether there is a way around it.
+  built: true
+  href: /apps/
+
+- slug: decide
+  label: Decide
+  question: Should I switch at all
+  blurb: Who GrapheneOS suits, who it does not, and what you give up either way.
+  built: false
+
+- slug: troubleshoot
+  label: Troubleshoot
+  question: Something is not working
+  blurb: Symptom to cause to fix. Push notifications, payments, Android Auto, boot warnings.
+  built: false
+
+- slug: devices
+  label: Devices
+  question: Which Pixel should I buy
+  blurb: What GrapheneOS supports, what it recommends, and how long each device stays patched.
+  built: false

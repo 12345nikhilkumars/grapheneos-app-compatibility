@@ -1,0 +1,28 @@
+{{/* The provenance line. Every verdict on this site carries one.
+
+     A status on its own is a claim. Status plus how many reports back it, when
+     it was last confirmed, and who confirmed it, is information.
+
+     Expects a derived row: (dict "verdict" ... "confidence" ... "last_verified" ... "tier" ...) */}}
+{{ $row := . }}
+<p class="provenance">
+  {{ if not $row.reported }}
+    <span class="provenance__none">No reports yet for this country</span>
+  {{ else }}
+    <span>{{ $row.confidence }} report{{ if ne (int $row.confidence) 1 }}s{{ end }} agree</span>
+    <span aria-hidden="true">·</span>
+    <span>last verified <time datetime="{{ $row.last_verified }}">{{ $row.last_verified }}</time></span>
+    {{ if $row.tier }}
+      <span aria-hidden="true">·</span>
+      <span>{{ partial "badge.html" (dict "kind" "tier" "value" $row.tier) }}</span>
+    {{ end }}
+    {{ if $row.dissent }}
+      <span aria-hidden="true">·</span>
+      <span class="provenance__dissent">{{ $row.dissent }} report{{ if ne $row.dissent 1 }}s{{ end }} disagree</span>
+    {{ end }}
+    {{ if $row.stale }}
+      <span aria-hidden="true">·</span>
+      <span class="provenance__stale">may be out of date</span>
+    {{ end }}
+  {{ end }}
+</p>

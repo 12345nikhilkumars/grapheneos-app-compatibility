@@ -1,0 +1,63 @@
+name: link check
+
+on:
+  schedule:
+    - cron: "22 22 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: "0.166.0"
+          extended: true
+
+      - name: Build site
+        run: |
+          uv run --project scripts python scripts/build_data.py
+          hugo --minify
+
+      # Sources cited in reports are the links most likely to rot, and they are
+      # the evidence a reader would use to check a claim. Worth watching.
+      - name: Check links
+        id: lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --no-progress
+            --max-retries 3
+            --accept 200,206,429
+            --exclude-path public/apps/index.json
+            public
+        continue-on-error: true
+
+      - name: Report failures
+        if: steps.lychee.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create link-rot --color FBCA04 --description "A cited link no longer resolves" 2>/dev/null || true
+          BODY=$(printf 'The weekly link check found broken links.\n\nRun: %s/%s/actions/runs/%s\n' \
+            "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID")
+          NUM=$(gh issue list --label link-rot --state open --json number --jq '.[0].number')
+          if [ -n "$NUM" ]; then
+            gh issue comment "$NUM" --body "$BODY"
+          else
+            gh issue create --title "Broken links found" --label link-rot --body "$BODY"
+          fi

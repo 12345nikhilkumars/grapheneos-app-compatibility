@@ -1,0 +1,25 @@
+baseURL = "https://grapheneos-info-board.example/"
+defaultContentLanguage = "en"
+title = "GrapheneOS Info Board"
+enableRobotsTXT = true
+
+disableKinds = ["taxonomy", "term"]
+
+[params]
+  description = "Which apps work on GrapheneOS, and whether they can be fixed."
+  repo = "https://github.com/example/grapheneos-info-board"
+  staleAfterDays = 180
+
+[markup]
+  [markup.goldmark.renderer]
+    unsafe = true
+
+[outputs]
+  home = ["HTML", "RSS"]
+  section = ["HTML"]
+
+[outputFormats.feed]
+  mediaType = "application/json"
+  baseName = "index"
+  isPlainText = true
+  notAlternative = true

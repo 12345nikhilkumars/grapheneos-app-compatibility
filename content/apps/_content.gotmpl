@@ -1,0 +1,59 @@
+{{/*
+  Generates one page per country, and one per service type within each country.
+
+  Paths are relative to this directory, so "in" becomes /apps/in/ and
+  "in/banking" becomes /apps/in/banking/. That nesting is the reason a content
+  adapter is used instead of taxonomies: the structure falls straight out of the
+  derived data with no permalink configuration and no generated files in git.
+
+  Reads data/derived/apps.json, which scripts/build_data.py produces. Run ./dev
+  rather than hugo directly, or this file will have nothing to read.
+*/}}
+
+{{ $raw := os.ReadFile "data/derived/apps.json" }}
+{{ if not $raw }}
+  {{ errorf "data/derived/apps.json is missing. Run ./dev or scripts/build_data.py before building." }}
+{{ end }}
+{{ $data := $raw | transform.Unmarshal }}
+
+{{ range $data.countries }}
+  {{ $country := . }}
+  {{ $countryParams := dict
+    "pageKind" "country"
+    "country" $country.code
+    "countryName" $country.name
+    "region" $country.region
+    "total" $country.total
+    "types" $country.types
+  }}
+  {{ $.AddPage (dict
+    "content" (dict "mediaType" "text/markdown" "value" "")
+    "kind" "page"
+    "path" (lower $country.code)
+    "title" $country.name
+    "params" $countryParams
+  ) }}
+
+  {{ range $country.types }}
+    {{ $type := . }}
+    {{ $typeParams := dict
+      "pageKind" "service-type"
+      "country" $country.code
+      "countryName" $country.name
+      "serviceType" $type.slug
+      "serviceTypeLabel" $type.label
+      "note" $type.note
+      "total" $type.total
+      "counts" $type.counts
+      "worst" $type.worst
+      "apps" $type.apps
+    }}
+    {{ $.AddPage (dict
+      "content" (dict "mediaType" "text/markdown" "value" "")
+      "kind" "page"
+      "path" (printf "%s/%s" (lower $country.code) $type.slug)
+      "title" (printf "%s in %s" $type.label $country.name)
+      "params" $typeParams
+    ) }}
+  {{ end }}
+{{ end }}

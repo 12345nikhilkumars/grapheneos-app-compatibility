@@ -1,0 +1,195 @@
+{{/* The app detail page. Country-neutral, so a cross-country app keeps one
+     canonical URL. The reading order is deliberate: the first four layers
+     answer the question for a non-technical reader, and the last two hold the
+     evidence and the contribution path behind a disclosure. */}}
+{{ define "main" }}
+{{ $derived := partialCached "derived.html" . }}
+{{ $slug := .File.ContentBaseName }}
+{{ $app := index $derived.apps $slug }}
+{{ if not $app }}{{ errorf "no derived data for app %q. Run scripts/build_data.py." $slug }}{{ end }}
+
+{{ $order := slice "broken" "unavailable" "works-degraded" "works-with-setup" "works" "unknown" }}
+{{ $worst := "unknown" }}
+{{ $worstRank := 99 }}
+{{ $worstCode := "" }}
+{{ range $code, $row := $app.by_country }}
+  {{ if $row.reported }}
+    {{ $rank := 99 }}
+    {{ range $i, $value := $order }}{{ if eq $value $row.verdict }}{{ $rank = $i }}{{ end }}{{ end }}
+    {{ if lt $rank $worstRank }}
+      {{ $worstRank = $rank }}
+      {{ $worst = $row.verdict }}
+      {{ $worstCode = $code }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{ $worstName := $worstCode }}
+{{ range where hugo.Data.countries "code" $worstCode }}{{ $worstName = .name }}{{ end }}
+
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="{{ "/apps/" | relURL }}">Apps</a>
+  {{ with $worstCode }}
+    <span aria-hidden="true">/</span>
+    <a href="{{ printf "/apps/%s/" (lower $worstCode) | relURL }}">{{ $worstName }}</a>
+    <span aria-hidden="true">/</span>
+    <a href="{{ printf "/apps/%s/%s/" (lower $worstCode) $app.service_type | relURL }}">{{ $app.service_type }}</a>
+  {{ end }}
+</nav>
+
+<article class="app">
+
+  <header class="app__head">
+    <h1>{{ $app.title }}</h1>
+    {{ with $app.developer }}<p class="app__dev">{{ . }}{{ with $app.package }} · <code>{{ . }}</code>{{ end }}</p>{{ end }}
+  </header>
+
+  {{/* Layer 1 — the verdict. Answers the question in three seconds. */}}
+  <section class="verdict" aria-label="Verdict">
+    <div class="verdict__row">
+      <span class="verdict__label">Status</span>
+      <span class="verdict__value">
+        {{ partial "badge.html" (dict "kind" "result" "value" $worst) }}
+        {{ with $worstCode }}<span class="verdict__where">in {{ $worstName }}</span>{{ end }}
+      </span>
+    </div>
+    {{ with index $app.by_country $worstCode }}
+      <div class="verdict__row">
+        <span class="verdict__label">Can it be fixed</span>
+        <span class="verdict__value">{{ partial "badge.html" (dict "kind" "fixability" "value" .fixability) }}</span>
+      </div>
+      <div class="verdict__row">
+        <span class="verdict__label">Why</span>
+        <span class="verdict__value">{{ partial "badge.html" (dict "kind" "blocked_reason" "value" .blocked_reason) }}</span>
+      </div>
+      {{ partial "provenance.html" . }}
+    {{ else }}
+      <p class="provenance"><span class="provenance__none">Nobody has reported testing this app anywhere yet.</span></p>
+    {{ end }}
+  </section>
+
+  {{/* Layer 2 — plain language. */}}
+  <div class="prose app__body">{{ .Content }}</div>
+
+  {{/* Layer 3 — what to do. */}}
+  {{ with index $app.by_country $worstCode }}
+    {{ if .latest }}
+      <section class="callout{{ if eq .fixability "not-possible" }} callout--bad{{ else if eq .fixability "not-applicable" }} callout--good{{ else }} callout--warn{{ end }}">
+        <h2>What to do</h2>
+        {{ if .latest.workaround }}
+          <p>{{ .latest.workaround }}</p>
+        {{ else if eq .fixability "not-possible" }}
+          <p>There is no known workaround, and none looks likely. Plan around this app rather than for it.</p>
+        {{ else if eq .fixability "not-applicable" }}
+          <p>Nothing. The app works as it should.</p>
+        {{ else }}
+          <p>Nobody has established a workaround yet. That is not the same as proving none exists.</p>
+        {{ end }}
+      </section>
+    {{ end }}
+  {{ end }}
+
+  {{/* Layer 4 — by country. */}}
+  {{ if gt (len $app.by_country) 1 }}
+    <section class="block">
+      <h2>By country</h2>
+      <div class="table-wrap">
+        <table class="matrix">
+          <thead>
+            <tr><th scope="col">Country</th><th scope="col">Status</th><th scope="col">Fixable</th><th scope="col">Evidence</th></tr>
+          </thead>
+          <tbody>
+            {{ range $code, $row := $app.by_country }}
+              {{ $name := $code }}
+              {{ range where hugo.Data.countries "code" $code }}{{ $name = .name }}{{ end }}
+              <tr{{ if not $row.reported }} class="row--muted"{{ end }}>
+                <th scope="row">{{ $name }}</th>
+                <td>{{ partial "badge.html" (dict "kind" "result" "value" $row.verdict) }}</td>
+                <td>{{ partial "badge.html" (dict "kind" "fixability" "value" $row.fixability) }}</td>
+                <td class="cell--evidence">
+                  {{ if $row.reported }}
+                    {{ $row.confidence }} report{{ if ne (int $row.confidence) 1 }}s{{ end }}<br>
+                    <time datetime="{{ $row.last_verified }}">{{ $row.last_verified }}</time>
+                  {{ else }}
+                    <span class="provenance__none">none yet</span>
+                  {{ end }}
+                </td>
+              </tr>
+            {{ end }}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  {{ end }}
+
+  {{/* Layer 5 — evidence, collapsed. */}}
+  <details class="disclosure">
+    <summary>Technical detail — {{ len $app.reports }} report{{ if ne (len $app.reports) 1 }}s{{ end }}</summary>
+    <div class="disclosure__body">
+      {{ if $app.reports }}
+        <ul class="reports">
+          {{ range $app.reports }}
+            <li class="report">
+              <div class="report__head">
+                <time datetime="{{ .date }}">{{ .date }}</time>
+                <code>build {{ .build }}</code>
+                <span>{{ .device }}</span>
+                <span>{{ .profile }} profile</span>
+                <span>{{ .play }} Play</span>
+                {{ with .carrier }}<span>{{ . }}</span>{{ end }}
+              </div>
+              <div class="report__result">
+                {{ partial "badge.html" (dict "kind" "result" "value" .result) }}
+                {{ partial "badge.html" (dict "kind" "fixability" "value" .fixability) }}
+                {{ partial "badge.html" (dict "kind" "blocked_reason" "value" .blocked_reason) }}
+              </div>
+              {{ with .workaround }}<p class="report__workaround"><strong>Workaround:</strong> {{ . }}</p>{{ end }}
+              <div class="report__meta">
+                <span>{{ .country }}</span>
+                <span>{{ partial "badge.html" (dict "kind" "tier" "value" .tier) }}</span>
+                <span>{{ .reporter }}</span>
+                {{ with .source }}
+                  <a href="{{ . }}" rel="nofollow noopener">imported from source</a>
+                {{ end }}
+              </div>
+            </li>
+          {{ end }}
+        </ul>
+      {{ else }}
+        <p>No reports have been submitted for this app.</p>
+      {{ end }}
+
+      <p class="disclosure__note">
+        Imported reports were taken from a public source rather than tested by a
+        contributor to this project. They have not been reproduced.
+      </p>
+    </div>
+  </details>
+
+  {{/* Layer 6 — contribute, collapsed. */}}
+  <details class="disclosure">
+    <summary>Contribute a report</summary>
+    <div class="disclosure__body">
+      <p>
+        If you have run this app on GrapheneOS, a report is the single most
+        useful thing you can add. Open
+        <code>content/app/{{ $slug }}.md</code> and add an entry to the top of
+        the <code>reports</code> list.
+      </p>
+      <ul>
+        <li>Report what you actually saw, on the build you were actually running.</li>
+        <li>Only set a reason if you know why it failed. Otherwise leave it as <code>unknown</code>.</li>
+        <li>Do not submit second-hand reports, or anything generated by a language model.</li>
+      </ul>
+      <p><a href="{{ site.Params.repo }}/blob/main/CONTRIBUTING.md">Contributing guide →</a></p>
+    </div>
+  </details>
+
+  <footer class="app__links">
+    {{ with $app.links.homepage }}<a href="{{ . }}" rel="nofollow noopener">Homepage</a>{{ end }}
+    {{ with $app.links.play_store }}<a href="{{ . }}" rel="nofollow noopener">Play Store</a>{{ end }}
+    {{ with $app.links.fdroid }}<a href="{{ . }}" rel="nofollow noopener">F-Droid</a>{{ end }}
+  </footer>
+
+</article>
+{{ end }}

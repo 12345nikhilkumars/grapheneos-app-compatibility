@@ -1,0 +1,41 @@
+name: build
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: "0.166.0"
+          extended: true
+
+      # Validation runs first and is allowed to fail the job. Hugo performs no
+      # validation of its own, so without this a malformed entry would render as
+      # a blank field rather than stopping the build.
+      - name: Validate entries
+        run: uv run --project scripts python scripts/validate.py
+
+      - name: Derive data
+        run: uv run --project scripts python scripts/build_data.py
+
+      - name: Build site
+        run: hugo --minify --printPathWarnings

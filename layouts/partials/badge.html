@@ -1,0 +1,14 @@
+{{/* Renders a badge for any enum value described in data/statuses.yaml.
+
+     Expects a dict: (dict "kind" "result" "value" "broken") */}}
+{{ $kind := .kind }}
+{{ $value := .value }}
+{{ $label := $value }}
+{{ $tone := "muted" }}
+{{ range index hugo.Data.statuses $kind }}
+  {{ if eq .value $value }}
+    {{ $label = .label }}
+    {{ $tone = .tone | default "muted" }}
+  {{ end }}
+{{ end }}
+<span class="badge badge--{{ $tone }}" title="{{ $value }}">{{ $label }}</span>

@@ -1,0 +1,95 @@
+# Status and enum reference.
+#
+# This file drives display only. Validation uses schemas/app.schema.json, which
+# is the source of truth for what is allowed. Keep the two in step.
+
+result:
+  - value: works
+    label: Works
+    tone: good
+    summary: Runs normally with no setup beyond installing it.
+  - value: works-with-setup
+    label: Works with setup
+    tone: warn
+    summary: Runs, but only after a change — a Play Services install, an exploit-protection exception, or a settings toggle.
+  - value: works-degraded
+    label: Works, degraded
+    tone: warn
+    summary: Runs, but a feature is missing or capped. Usually DRM resolution or push notifications.
+  - value: broken
+    label: Broken
+    tone: bad
+    summary: Installs, but is unusable. Refuses to start, fails an integrity check, or cannot complete its main task.
+  - value: unavailable
+    label: Unavailable
+    tone: bad
+    summary: Cannot be installed at all — not offered, or removed after install.
+  - value: unknown
+    label: Unknown
+    tone: muted
+    summary: Nobody has reported testing this app in this country.
+
+blocked_reason:
+  - value: play-integrity
+    label: Play Integrity
+    summary: The app checks Play Integrity and fails. Locking the bootloader does not help.
+  - value: safetynet
+    label: SafetyNet
+    summary: The older attestation API. Same failure, older mechanism.
+  - value: custom-firmware-detection
+    label: Custom firmware detection
+    summary: The app notices the OS is not stock and refuses to run, without naming an API.
+  - value: hardware-attestation
+    label: Hardware attestation
+    summary: Fails a hardware-backed key attestation. Not bypassable.
+  - value: drm
+    label: DRM
+    summary: Widevine L3 only, so protected content is capped at low resolution.
+  - value: play-services-required
+    label: Play Services required
+    summary: The app requires Google Play Services and will not run without it.
+  - value: push-delivery
+    label: Push delivery
+    summary: Push notifications arrive late or not at all, usually because the app is being battery-optimised.
+  - value: carrier-provisioning
+    label: Carrier provisioning
+    summary: Fails because the carrier has not provisioned the device. Usually affects VoLTE, VoWiFi or eSIM.
+  - value: none
+    label: None
+    summary: No blocker. Used with a working result.
+  - value: unknown
+    label: Unknown
+    summary: It failed and nobody knows why yet.
+
+fixability:
+  - value: not-applicable
+    label: Nothing to fix
+    tone: good
+    summary: The app works. There is nothing to work around.
+  - value: not-possible
+    label: Not fixable
+    tone: bad
+    summary: No workaround exists, and none is plausible.
+  - value: possible-with-steps
+    label: Fixable with steps
+    tone: warn
+    summary: Works if you change something first. Steps are listed.
+  - value: possible-via-workaround
+    label: Use an alternative
+    tone: warn
+    summary: The app cannot work, but another app can do the same job.
+  - value: unknown
+    label: Unknown
+    tone: muted
+    summary: Nobody has tried to work around it yet.
+
+tier:
+  - value: maintainer
+    label: Verified by maintainer
+    summary: Reproduced and confirmed by a maintainer.
+  - value: trusted
+    label: Verified by contributor
+    summary: Reproduced independently by a trusted contributor.
+  - value: community
+    label: Community report
+    summary: One person's report. Not reproduced.

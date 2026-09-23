@@ -1,0 +1,74 @@
+# Service types.
+#
+# A closed list. Adding a type is a deliberate change: it becomes a URL segment
+# and every country page grows a row for it. Keep the list short.
+#
+# slug  - URL segment and the value used in app frontmatter
+# label - display name
+# order - sort order on country pages
+# note  - short description shown on the service type page
+
+- slug: banking
+  label: Banking
+  order: 10
+  note: Retail and business banking apps. The most common casualty of device attestation.
+
+- slug: payments
+  label: Payments and UPI
+  order: 20
+  note: Contactless payment, wallet apps, and instant payment systems such as UPI.
+
+- slug: government
+  label: Government and identity
+  order: 30
+  note: Tax, licensing, health, and digital identity apps. Often the strictest about attestation.
+
+- slug: messaging
+  label: Messaging
+  order: 40
+  note: Chat and calling apps. Usually fine, but push notifications and RCS are recurring problems.
+
+- slug: social
+  label: Social
+  order: 50
+  note: Social networks and community apps.
+
+- slug: email
+  label: Email
+  order: 60
+  note: Mail clients and the accounts they sign into.
+
+- slug: streaming
+  label: Streaming and media
+  order: 70
+  note: Video and audio streaming. Resolution caps are a hardware limitation, not a bug.
+
+- slug: transport
+  label: Transport
+  order: 80
+  note: Ride-hailing, transit, and navigation.
+
+- slug: shopping
+  label: Shopping and delivery
+  order: 90
+  note: Retail, food delivery, and logistics apps.
+
+- slug: work
+  label: Work and productivity
+  order: 100
+  note: Office suites, project tools, and anything an employer manages.
+
+- slug: security
+  label: Security and 2FA
+  order: 110
+  note: Password managers, authenticators, and VPN clients.
+
+- slug: games
+  label: Games
+  order: 120
+  note: Games with anti-cheat or integrity checks are the common failures here.
+
+- slug: wearables
+  label: Wearables and smart home
+  order: 130
+  note: Watches, earbuds, and home automation. Companion apps are often the blocker.

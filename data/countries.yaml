@@ -1,0 +1,98 @@
+# Countries with a board.
+#
+# code     - ISO 3166-1 alpha-2. The value used in app report frontmatter.
+# name     - display name
+# region   - grouping on the apps index
+# order    - sort order within a region
+# priority - surfaced first. India leads because the maintainer can verify
+#            Indian apps hands-on, and because the UPI situation is contested
+#            and needs first-hand testing.
+#
+# A country page is only generated if at least one app declares it. Adding a
+# country here does not create an empty page.
+
+- code: IN
+  name: India
+  region: Asia
+  order: 1
+  priority: true
+- code: US
+  name: United States
+  region: Americas
+  order: 1
+  priority: false
+- code: CA
+  name: Canada
+  region: Americas
+  order: 2
+  priority: false
+- code: BR
+  name: Brazil
+  region: Americas
+  order: 3
+  priority: false
+- code: GB
+  name: United Kingdom
+  region: Europe
+  order: 1
+  priority: false
+- code: DE
+  name: Germany
+  region: Europe
+  order: 2
+  priority: false
+- code: FR
+  name: France
+  region: Europe
+  order: 3
+  priority: false
+- code: NL
+  name: Netherlands
+  region: Europe
+  order: 4
+  priority: false
+- code: CH
+  name: Switzerland
+  region: Europe
+  order: 5
+  priority: false
+- code: AT
+  name: Austria
+  region: Europe
+  order: 6
+  priority: false
+- code: SE
+  name: Sweden
+  region: Europe
+  order: 7
+  priority: false
+- code: ES
+  name: Spain
+  region: Europe
+  order: 8
+  priority: false
+- code: IT
+  name: Italy
+  region: Europe
+  order: 9
+  priority: false
+- code: JP
+  name: Japan
+  region: Asia
+  order: 2
+  priority: false
+- code: SG
+  name: Singapore
+  region: Asia
+  order: 3
+  priority: false
+- code: AE
+  name: United Arab Emirates
+  region: Asia
+  order: 4
+  priority: false
+- code: AU
+  name: Australia
+  region: Oceania
+  order: 1
+  priority: false

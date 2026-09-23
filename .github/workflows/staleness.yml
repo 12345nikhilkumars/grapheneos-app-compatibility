@@ -1,0 +1,55 @@
+name: staleness
+
+on:
+  schedule:
+    - cron: "17 9 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Build the stale report
+        run: |
+          uv run --project scripts python scripts/build_data.py
+          uv run --project scripts python scripts/staleness.py > stale.md
+          cat stale.md
+
+      # One pinned issue, updated in place. A new issue every month would train
+      # everyone to ignore it.
+      - name: Open or update the pinned issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create staleness --color 0E8A16 \
+            --description "Entries that have not been re-verified recently" 2>/dev/null || true
+
+          if grep -q "No entries are stale" stale.md; then
+            echo "Nothing stale this month."
+            exit 0
+          fi
+
+          NUM=$(gh issue list --label staleness --state open --json number --jq '.[0].number')
+          if [ -n "$NUM" ]; then
+            gh issue edit "$NUM" --body-file stale.md
+            echo "Updated issue #$NUM"
+          else
+            gh issue create \
+              --title "Entries needing re-verification" \
+              --label staleness \
+              --body-file stale.md
+          fi

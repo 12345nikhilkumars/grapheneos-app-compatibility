@@ -1,0 +1,117 @@
+{{/* Generated pages: one per country, one per service type within a country.
+
+     The two are distinguished by .Params.pageKind rather than by URL depth,
+     because Hugo resolves both through this same template. */}}
+{{ define "main" }}
+{{ $kind := .Params.pageKind }}
+{{ $country := .Params.country }}
+
+{{ if eq $kind "country" }}
+
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a href="{{ "/apps/" | relURL }}">Apps</a>
+    <span aria-hidden="true">/</span>
+    <span>{{ .Params.countryName }}</span>
+  </nav>
+
+  <header class="page-head">
+    <h1>GrapheneOS in {{ .Params.countryName }}</h1>
+    <p class="page-head__lede">
+      {{ .Params.total }} app{{ if ne .Params.total 1 }}s{{ end }} tracked across
+      {{ len .Params.types }} service type{{ if ne (len .Params.types) 1 }}s{{ end }}.
+      A status only reflects reports from this country — an app working elsewhere may still fail here.
+    </p>
+  </header>
+
+  <ul class="type-list">
+    {{ range .Params.types }}
+      <li class="type-row">
+        <a class="type-row__link" href="{{ printf "/apps/%s/%s/" (lower $country) .slug | relURL }}">
+          <span class="type-row__head">
+            <span class="type-row__label">{{ .label }}</span>
+            {{ partial "badge.html" (dict "kind" "result" "value" .worst) }}
+          </span>
+          <span class="type-row__counts">
+            {{ .total }} app{{ if ne .total 1 }}s{{ end }}
+            {{ range $value, $n := .counts }}
+              · {{ $n }} {{ $value }}
+            {{ end }}
+          </span>
+        </a>
+        <p class="type-row__note">{{ .note }}</p>
+      </li>
+    {{ end }}
+  </ul>
+
+  <section class="block">
+    <h2>Reading this page</h2>
+    <p>
+      Apps are ordered worst first. A status shown here is derived from reports
+      filed from {{ .Params.countryName }} only — where no report exists, the app
+      shows as unknown rather than assuming it works.
+    </p>
+    <p><a href="{{ "/about/methodology/" | relURL }}">What the statuses mean →</a></p>
+  </section>
+
+{{ else }}
+
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a href="{{ "/apps/" | relURL }}">Apps</a>
+    <span aria-hidden="true">/</span>
+    <a href="{{ printf "/apps/%s/" (lower $country) | relURL }}">{{ .Params.countryName }}</a>
+    <span aria-hidden="true">/</span>
+    <span>{{ .Params.serviceTypeLabel }}</span>
+  </nav>
+
+  <header class="page-head">
+    <h1>{{ .Params.serviceTypeLabel }} in {{ .Params.countryName }}</h1>
+    <p class="page-head__lede">{{ .Params.note }}</p>
+  </header>
+
+  <div class="table-wrap">
+    <table class="matrix">
+      <thead>
+        <tr>
+          <th scope="col">App</th>
+          <th scope="col">Status</th>
+          <th scope="col">Fixable</th>
+          <th scope="col">Why</th>
+          <th scope="col">Evidence</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{ range .Params.apps }}
+          <tr{{ if eq .verdict "unknown" }} class="row--muted"{{ end }}>
+            <th scope="row">
+              <a href="{{ printf "/app/%s/" .slug | relURL }}">{{ .title }}</a>
+              {{ if .requires_play_services }}<span class="tag tag--sm">needs Play</span>{{ end }}
+            </th>
+            <td>{{ partial "badge.html" (dict "kind" "result" "value" .verdict) }}</td>
+            <td>{{ partial "badge.html" (dict "kind" "fixability" "value" .fixability) }}</td>
+            <td>{{ partial "badge.html" (dict "kind" "blocked_reason" "value" .blocked_reason) }}</td>
+            <td class="cell--evidence">
+              {{ if .reported }}
+                {{ .confidence }} report{{ if ne (int .confidence) 1 }}s{{ end }}<br>
+                <time datetime="{{ .last_verified }}">{{ .last_verified }}</time>
+                {{ if .stale }}<br><span class="provenance__stale">may be out of date</span>{{ end }}
+              {{ else }}
+                <span class="provenance__none">none yet</span>
+              {{ end }}
+            </td>
+          </tr>
+        {{ end }}
+      </tbody>
+    </table>
+  </div>
+
+  <section class="block">
+    <h2>About these results</h2>
+    <p>
+      Every row links to the full entry, which explains what happens in plain
+      language, what to do about it, and the individual reports behind the status.
+    </p>
+    <p><a href="{{ "/about/methodology/" | relURL }}">How statuses are derived →</a></p>
+  </section>
+
+{{ end }}
+{{ end }}

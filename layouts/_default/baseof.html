@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="{{ site.Language.Lang | default "en" }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}</title>
+  <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ site.Params.description }}{{ end }}">
+  <link rel="stylesheet" href="{{ "css/main.css" | relURL }}">
+  {{ block "head" . }}{{ end }}
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <a class="brand" href="{{ "/" | relURL }}">
+      <span class="brand__mark" aria-hidden="true"></span>
+      GrapheneOS Info Board
+    </a>
+    <nav class="site-nav" aria-label="Main">
+      <a href="{{ "/apps/" | relURL }}">Apps</a>
+      <a href="{{ "/about/methodology/" | relURL }}">Methodology</a>
+      <a href="{{ "/about/contribute/" | relURL }}">Contribute</a>
+      <a href="{{ "/about/" | relURL }}">About</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    {{ block "main" . }}{{ end }}
+  </main>
+
+  <footer class="site-footer">
+    <p>
+      Content <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> ·
+      Code <a href="https://www.gnu.org/licenses/agpl-3.0.html">AGPL-3.0-or-later</a>
+    </p>
+    <p>Not affiliated with the GrapheneOS project. No claims are made about the security of any device.</p>
+    <p><a href="{{ site.Params.repo }}">Contribute on GitHub</a> · <a href="{{ "index.xml" | relURL }}">RSS</a></p>
+  </footer>
+</body>
+</html>

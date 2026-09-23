@@ -1,0 +1,38 @@
+{{ define "main" }}
+{{ $derived := partialCached "derived.html" . }}
+
+<header class="page-head">
+  <h1>{{ .Title }}</h1>
+  <div class="prose">{{ .Content }}</div>
+</header>
+
+{{ $regions := slice }}
+{{ range $derived.countries }}{{ $regions = $regions | append .region }}{{ end }}
+{{ $regions = uniq $regions }}
+
+{{ range $region := $regions }}
+  <section class="block">
+    <h2>{{ $region }}</h2>
+    <ul class="country-grid">
+      {{ range where $derived.countries "region" $region }}
+        <li class="country-card{{ if .priority }} country-card--priority{{ end }}">
+          <a href="{{ printf "/apps/%s/" (lower .code) | relURL }}">
+            <span class="country-card__name">{{ .name }}</span>
+            <span class="country-card__meta">{{ .total }} app{{ if ne (int .total) 1 }}s{{ end }} tracked</span>
+          </a>
+        </li>
+      {{ end }}
+    </ul>
+  </section>
+{{ end }}
+
+<section class="block">
+  <h2>No page for your country?</h2>
+  <p>
+    A country board is generated once at least one app declares it, or someone
+    reports from there. If yours is missing, that means nobody has submitted
+    anything yet — a single report is enough to create it.
+  </p>
+  <p><a href="{{ site.Params.repo }}/blob/main/CONTRIBUTING.md">How to contribute →</a></p>
+</section>
+{{ end }}

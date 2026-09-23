@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+# Validate, derive, then serve. This is the only command a contributor needs.
+set -eu
+
+cd "$(dirname "$0")"
+
+uv run --project scripts --quiet python scripts/validate.py
+uv run --project scripts --quiet python scripts/build_data.py
+
+exec hugo server --bind 127.0.0.1 --port 1313

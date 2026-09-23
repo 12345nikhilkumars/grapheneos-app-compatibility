@@ -1,0 +1,160 @@
+# Google Pixel devices supported by GrapheneOS.
+#
+# Source: https://grapheneos.org/faq (device support section). Verified 2026-09-23.
+# Re-verify against the FAQ when adding a device. GrapheneOS is Pixel-only.
+#
+# slug        - value used in app report frontmatter
+# name        - display name
+# codename    - Google's device codename
+# generation  - Pixel generation number
+# recommended - GrapheneOS "strongly recommends" this device
+# mte         - hardware memory tagging, present from the 8th generation
+# support_end - OEM minimum guaranteed support end date
+
+- slug: pixel-6
+  name: Pixel 6
+  codename: oriole
+  generation: 6
+  recommended: false
+  mte: false
+  support_end: 2026-10
+- slug: pixel-6-pro
+  name: Pixel 6 Pro
+  codename: raven
+  generation: 6
+  recommended: false
+  mte: false
+  support_end: 2026-10
+- slug: pixel-6a
+  name: Pixel 6a
+  codename: bluejay
+  generation: 6
+  recommended: false
+  mte: false
+  support_end: 2027-07
+- slug: pixel-7
+  name: Pixel 7
+  codename: panther
+  generation: 7
+  recommended: false
+  mte: false
+  support_end: 2027-10
+- slug: pixel-7-pro
+  name: Pixel 7 Pro
+  codename: cheetah
+  generation: 7
+  recommended: false
+  mte: false
+  support_end: 2027-10
+- slug: pixel-7a
+  name: Pixel 7a
+  codename: lynx
+  generation: 7
+  recommended: false
+  mte: false
+  support_end: 2028-05
+- slug: pixel-fold
+  name: Pixel Fold
+  codename: felix
+  generation: 7
+  recommended: false
+  mte: false
+  support_end: 2028-06
+- slug: pixel-tablet
+  name: Pixel Tablet
+  codename: tangorpro
+  generation: 7
+  recommended: false
+  mte: false
+  support_end: 2028-06
+- slug: pixel-8
+  name: Pixel 8
+  codename: shiba
+  generation: 8
+  recommended: true
+  mte: true
+  support_end: 2030-10
+- slug: pixel-8-pro
+  name: Pixel 8 Pro
+  codename: husky
+  generation: 8
+  recommended: true
+  mte: true
+  support_end: 2030-10
+- slug: pixel-8a
+  name: Pixel 8a
+  codename: akita
+  generation: 8
+  recommended: true
+  mte: true
+  support_end: 2031-05
+- slug: pixel-9
+  name: Pixel 9
+  codename: tokay
+  generation: 9
+  recommended: true
+  mte: true
+  support_end: 2031-08
+- slug: pixel-9-pro
+  name: Pixel 9 Pro
+  codename: caiman
+  generation: 9
+  recommended: true
+  mte: true
+  support_end: 2031-08
+- slug: pixel-9-pro-xl
+  name: Pixel 9 Pro XL
+  codename: komodo
+  generation: 9
+  recommended: true
+  mte: true
+  support_end: 2031-08
+- slug: pixel-9-pro-fold
+  name: Pixel 9 Pro Fold
+  codename: comet
+  generation: 9
+  recommended: true
+  mte: true
+  support_end: 2031-08
+- slug: pixel-9a
+  name: Pixel 9a
+  codename: tegu
+  generation: 9
+  recommended: true
+  mte: true
+  support_end: 2032-04
+- slug: pixel-10
+  name: Pixel 10
+  codename: frankel
+  generation: 10
+  recommended: true
+  mte: true
+  support_end: 2032-08
+- slug: pixel-10-pro
+  name: Pixel 10 Pro
+  codename: blazer
+  generation: 10
+  recommended: true
+  mte: true
+  support_end: 2032-08
+- slug: pixel-10-pro-xl
+  name: Pixel 10 Pro XL
+  codename: mustang
+  generation: 10
+  recommended: true
+  mte: true
+  support_end: 2032-08
+- slug: pixel-10-pro-fold
+  name: Pixel 10 Pro Fold
+  codename: rango
+  generation: 10
+  recommended: true
+  mte: true
+  support_end: 2032-10
+- slug: pixel-10a
+  name: Pixel 10a
+  codename: stallion
+  generation: 10
+  recommended: true
+  mte: true
+  support_end: 2033-03

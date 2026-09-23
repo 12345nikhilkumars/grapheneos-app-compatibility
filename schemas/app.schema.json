@@ -1,0 +1,192 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://grapheneos-info-board.example/schemas/app.schema.json",
+  "title": "App entry",
+  "description": "Frontmatter of a file in content/app/. The body of the file is prose and is not validated here.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["title", "slug", "service_type", "requires_play_services", "reports"],
+  "anyOf": [
+    { "required": ["countries"] },
+    { "required": ["global"] }
+  ],
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Display name."
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Must match the filename. Becomes the URL at /app/<slug>/."
+    },
+    "package": {
+      "type": ["string", "null"],
+      "pattern": "^[a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9_]+)+$",
+      "description": "Android application ID, where there is one."
+    },
+    "developer": {
+      "type": ["string", "null"]
+    },
+    "service_type": {
+      "type": "string",
+      "enum": [
+        "banking",
+        "payments",
+        "government",
+        "messaging",
+        "social",
+        "email",
+        "streaming",
+        "transport",
+        "shopping",
+        "work",
+        "security",
+        "games",
+        "wearables"
+      ],
+      "description": "Must match a slug in data/service-types.yaml. validate.py asserts the two lists are identical."
+    },
+    "countries": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z]{2}$"
+      },
+      "description": "Where the app is relevant. ISO 3166-1 alpha-2, from data/countries.yaml."
+    },
+    "global": {
+      "type": "boolean",
+      "description": "App is relevant everywhere. Use instead of countries."
+    },
+    "requires_play_services": {
+      "type": "boolean",
+      "description": "Whether the app needs Play Services to function."
+    },
+    "links": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "homepage": { "type": ["string", "null"], "format": "uri" },
+        "play_store": { "type": ["string", "null"], "format": "uri" },
+        "fdroid": { "type": ["string", "null"], "format": "uri" }
+      }
+    },
+    "reports": {
+      "type": "array",
+      "description": "Newest first. validate.py fails the build if the order is wrong. An empty list is valid and means nobody has reported testing this app yet.",
+      "items": { "$ref": "#/$defs/report" }
+    }
+  },
+  "$defs": {
+    "report": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "date",
+        "build",
+        "device",
+        "profile",
+        "country",
+        "play",
+        "result",
+        "blocked_reason",
+        "fixability",
+        "tier",
+        "reporter"
+      ],
+      "properties": {
+        "date": {
+          "type": "string",
+          "format": "date",
+          "description": "The day the test was run. Not the day the file was edited."
+        },
+        "build": {
+          "type": "string",
+          "pattern": "^[0-9]{10}$",
+          "description": "GrapheneOS build, YYYYMMDDNN."
+        },
+        "device": {
+          "type": "string",
+          "description": "Slug from data/devices.yaml."
+        },
+        "profile": {
+          "type": "string",
+          "enum": ["owner", "secondary"],
+          "description": "Which user profile the app was tested in."
+        },
+        "country": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}$",
+          "description": "Where the app was used, not where the reporter lives."
+        },
+        "carrier": {
+          "type": ["string", "null"],
+          "description": "Only set when the failure is carrier-related."
+        },
+        "play": {
+          "type": "string",
+          "enum": ["sandboxed", "microg", "none"],
+          "description": "How Play Services were provided, if at all."
+        },
+        "result": {
+          "type": "string",
+          "enum": [
+            "works",
+            "works-with-setup",
+            "works-degraded",
+            "broken",
+            "unavailable",
+            "unknown"
+          ]
+        },
+        "blocked_reason": {
+          "type": "string",
+          "enum": [
+            "play-integrity",
+            "safetynet",
+            "custom-firmware-detection",
+            "hardware-attestation",
+            "drm",
+            "play-services-required",
+            "push-delivery",
+            "carrier-provisioning",
+            "none",
+            "unknown"
+          ],
+          "description": "Only set this if the reporter actually knows why. A wrong reason sends the next person down a path that cannot work."
+        },
+        "fixability": {
+          "type": "string",
+          "enum": [
+            "not-applicable",
+            "not-possible",
+            "possible-with-steps",
+            "possible-via-workaround",
+            "unknown"
+          ]
+        },
+        "workaround": {
+          "type": ["string", "null"],
+          "description": "Steps, or the name of an alternative app. Required when fixability is possible-with-steps or possible-via-workaround."
+        },
+        "tier": {
+          "type": "string",
+          "enum": ["maintainer", "trusted", "community"]
+        },
+        "reporter": {
+          "type": "string",
+          "pattern": "^@?[A-Za-z0-9][A-Za-z0-9_-]*$"
+        },
+        "source": {
+          "type": ["string", "null"],
+          "format": "uri",
+          "description": "Public source this report was imported from. Set only on seed data imported by a maintainer. A contributor's own report must never carry this — if it does, it is second-hand and should be rejected."
+        }
+      }
+    }
+  }
+}

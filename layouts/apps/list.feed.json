@@ -1,0 +1,11 @@
+{{/* Machine-readable feed. Same derived data the pages are built from, so
+     anything consuming this sees exactly what a reader sees. */}}
+{{ $derived := partialCached "derived.html" . }}
+{{ $out := dict
+  "generated" $derived.generated
+  "stale_after_days" $derived.stale_after_days
+  "summary" $derived.summary
+  "countries" $derived.countries
+  "apps" $derived.apps
+}}
+{{ $out | jsonify (dict "indent" "  ") }}

@@ -1,0 +1,7 @@
+{{/* Reads the derived data. Called through partialCached so the file is read
+     once per build rather than once per page. */}}
+{{ $raw := os.ReadFile "data/derived/apps.json" }}
+{{ if not $raw }}
+  {{ errorf "data/derived/apps.json is missing. Run ./dev, or scripts/build_data.py, before building." }}
+{{ end }}
+{{ return ($raw | transform.Unmarshal) }}

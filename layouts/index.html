@@ -1,0 +1,62 @@
+{{ define "main" }}
+{{ $derived := partialCached "derived.html" . }}
+
+<section class="hero">
+  <h1>{{ site.Title }}</h1>
+  <p class="hero__lede">{{ site.Params.description }}</p>
+</section>
+
+<div class="prose prose--intro">{{ .Content }}</div>
+
+<section class="block">
+  <h2>What this board covers</h2>
+  <ul class="cards">
+    {{ range index hugo.Data "board-types" }}
+      <li class="card{{ if not .built }} card--unbuilt{{ end }}">
+        {{ if .built }}
+          <a class="card__title" href="{{ .href | relURL }}">{{ .label }}</a>
+        {{ else }}
+          <span class="card__title">{{ .label }}</span>
+        {{ end }}
+        <span class="card__question">{{ .question }}</span>
+        <p class="card__blurb">{{ .blurb }}</p>
+        {{ if not .built }}<span class="tag">Not built yet</span>{{ end }}
+      </li>
+    {{ end }}
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Countries with reports</h2>
+  <p class="block__note">
+    Status varies by region, because the apps that fail most often — banking,
+    payments, government identity — are country-specific.
+  </p>
+  <ul class="country-grid">
+    {{ range $derived.countries }}
+      <li class="country-card{{ if .priority }} country-card--priority{{ end }}">
+        <a href="{{ printf "/apps/%s/" (lower .code) | relURL }}">
+          <span class="country-card__name">{{ .name }}</span>
+          <span class="country-card__meta">{{ .total }} app{{ if ne (int .total) 1 }}s{{ end }} tracked</span>
+          <span class="country-card__worst">
+            {{ $worst := "works" }}
+            {{ range .types }}
+              {{ if eq .worst "broken" }}{{ $worst = "broken" }}
+              {{ else if and (ne $worst "broken") (eq .worst "unavailable") }}{{ $worst = "unavailable" }}
+              {{ else if and (ne $worst "broken") (ne $worst "unavailable") (eq .worst "works-degraded") }}{{ $worst = "works-degraded" }}
+              {{ end }}
+            {{ end }}
+            {{ partial "badge.html" (dict "kind" "result" "value" $worst) }}
+          </span>
+        </a>
+      </li>
+    {{ end }}
+  </ul>
+</section>
+
+<section class="block">
+  <h2>Recent reports</h2>
+  <p class="block__note">Generated {{ $derived.generated }}. {{ $derived.summary.reports }} reports across {{ $derived.summary.apps }} apps.</p>
+  <p><a href="{{ "/apps/" | relURL }}">Browse all apps →</a></p>
+</section>
+{{ end }}
