@@ -13,7 +13,7 @@ An entry with **no reports at all** is a valid and useful state. It says the app
 ## Adding a report to an existing app
 
 1. Open `content/app/<app-slug>.md`.
-2. Add an entry to the top of the `reports` list — newest first.
+2. Add an entry to the top of the `reports` list, newest first.
 3. Open a pull request.
 
 ```yaml
@@ -33,7 +33,7 @@ reports:
     reporter: "@yourhandle"
 ```
 
-Every field above except `carrier`, `workaround` and `source` is required for a first-hand report. `source` must be absent — a report carrying a `source` is second-hand by definition, and will be rejected.
+Every field above except `carrier`, `workaround` and `source` is required for a first-hand report. `source` must be absent: a report carrying a `source` is second-hand by definition, and will be rejected.
 
 ### Getting `result` right
 
@@ -44,13 +44,13 @@ Every field above except `carrier`, `workaround` and `source` is required for a 
 | `works-degraded` | Runs, but a feature is missing or capped. |
 | `broken` | Installs, but is unusable. Refuses to start, or cannot do its main job. |
 | `unavailable` | Cannot be installed at all. |
-| `unknown` | You could not tell. Rare — prefer one of the above. |
+| `unknown` | You could not tell. Rare; prefer one of the above. |
 
-The distinction that matters most is `works` versus `works-with-setup`. If you had to toggle a setting to get there, it is `works-with-setup`, and the toggle belongs in `workaround`. If it worked unaided, `fixability` is `not-applicable` — do not record a workaround for an app that needed none.
+The distinction that matters most is `works` versus `works-with-setup`. If you had to toggle a setting to get there, it is `works-with-setup`, and the toggle belongs in `workaround`. If it worked unaided, `fixability` is `not-applicable`. Do not record a workaround for an app that needed none.
 
 ### Getting `blocked_reason` right
 
-Only set it if you actually know why it failed. If the app refused to start and you have no idea why, use `unknown`. A wrong reason is worse than an honest gap — it sends the next person down a path that cannot work.
+Only set it if you actually know why it failed. If the app refused to start and you have no idea why, use `unknown`. A wrong reason is worse than an honest gap: it sends the next person down a path that cannot work.
 
 If you do know, the tell-tale signs:
 
@@ -69,15 +69,15 @@ Note on `drm`: a resolution cap usually means the Widevine provisioning path is 
 
 This is the field people come here for.
 
-- `not-applicable` — the app works. There is nothing to fix.
-- `not-possible` — no known workaround, and none is plausible. Be sure before using this. Reserve it for a check that is deliberate and enforced server-side.
-- `possible-with-steps` — works if you change something first. Put the steps in `workaround`.
-- `possible-via-workaround` — the app itself cannot work, but an alternative can do the same job. Name it in `workaround`, and add it to `alternatives` (below).
-- `unknown` — nobody has tried yet.
+- `not-applicable`: the app works. There is nothing to fix.
+- `not-possible`: no known workaround, and none is plausible. Be sure before using this. Reserve it for a check that is deliberate and enforced server-side.
+- `possible-with-steps`: works if you change something first. Put the steps in `workaround`.
+- `possible-via-workaround`: the app itself cannot work, but an alternative can do the same job. Name it in `workaround`, and add it to `alternatives` (below).
+- `unknown`: nobody has tried yet.
 
 ## Alternatives
 
-An app the reader cannot use needs somewhere to go. `alternatives` is a top-level field on the entry, not part of a report, because what an alternative covers does not change with the OS build — a bank's website exists whether or not the app installs.
+An app the reader cannot use needs somewhere to go. `alternatives` is a top-level field on the entry, not part of a report, because what an alternative covers does not change with the OS build: a bank's website exists whether or not the app installs.
 
 Add one whenever `fixability` is `not-possible` or `possible-via-workaround`. Validation warns if you do not.
 
@@ -121,7 +121,7 @@ Do not set your own report above `community`. Tiers are raised during review, an
 
 ### Imported reports
 
-`imported` is for maintainers seeding an entry from a public source — a forum thread, an issue, a news report. It is not something to submit in a pull request.
+`imported` is for maintainers seeding an entry from a public source: a forum thread, an issue, a news report. It is not something to submit in a pull request.
 
 An imported report **must** carry a `source`, and it may leave `build`, `device`, `profile` and `play` empty. That is deliberate. Forcing an imported report to name a build the original author never stated would mean inventing one, and a fabricated build number is worse than an empty field. Leave it null.
 

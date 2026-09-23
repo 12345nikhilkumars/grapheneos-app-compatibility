@@ -33,7 +33,7 @@ reports:
 
 Netflix installs, signs in, and plays, including at the higher resolutions your subscription allows. GrapheneOS supports Widevine L1 on Pixels.
 
-**This entry used to say the opposite, and it was wrong.** It claimed playback was permanently capped at Widevine L3 — roughly 480p — and that nothing could lift it. That described a real problem, but it was a bug in one 2023 release rather than a permanent limitation, and it had already been fixed when the entry was written.
+**This entry used to say the opposite, and it was wrong.** It claimed playback was permanently capped at Widevine L3 (roughly 480p) and that nothing could lift it. That described a real problem, but it was a bug in one 2023 release rather than a permanent limitation, and it had already been fixed when the entry was written.
 
 ## What actually happened
 
@@ -45,7 +45,7 @@ Anyone who updated and still saw L3 was told to clear the Netflix app's storage,
 
 ## Technical detail
 
-Widevine has three security levels. L1 requires a hardware-backed trusted execution path, and GrapheneOS provides one on Pixels — DRM support is enabled in the OS, with Widevine certificate provisioning going through a GrapheneOS reverse proxy by default. There is a **Settings → Network & Internet → Widevine provisioning** switch if you would rather use Google's service directly.
+Widevine has three security levels. L1 requires a hardware-backed trusted execution path, and GrapheneOS provides one on Pixels: DRM support is enabled in the OS, with Widevine certificate provisioning going through a GrapheneOS reverse proxy by default. There is a **Settings → Network & Internet → Widevine provisioning** switch if you would rather use Google's service directly.
 
 Two things are worth separating, because they get conflated:
 

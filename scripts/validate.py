@@ -61,7 +61,7 @@ class Report:
 def check_enum_drift(report: Report, schema: dict) -> None:
     """The schema duplicates the enum lists in data/. Assert they agree.
 
-    Duplication is unavoidable — JSON Schema cannot read YAML — so it is turned
+    Duplication is unavoidable (JSON Schema cannot read YAML), so it is turned
     into a checked invariant instead of a silent trap. Adding a value to
     statuses.yaml and forgetting the schema (or the reverse) fails the build.
     """
@@ -320,7 +320,7 @@ def check_alternatives(report: Report, entry, alternatives: list) -> None:
             report.warn(
                 entry.path,
                 f"report {index}: fixability is 'not-possible' but nothing is listed under "
-                "alternatives. Even an unfixable app usually has a fallback — a website, "
+                "alternatives. Even an unfixable app usually has a fallback: a website, "
                 "another app, or a physical card.",
                 line,
             )

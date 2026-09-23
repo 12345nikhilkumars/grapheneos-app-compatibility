@@ -58,8 +58,8 @@ The `fixability` value is `unknown` rather than `not-possible` for the same reas
 
 ## On the sources
 
-This is the weakest-sourced entry on the board and it should be treated that way. Its verdict rests on a single forum post in which Google Pay is mentioned in passing alongside four other apps — no app version, no build, no logs. A claim from that same post about PhonePe has since been withdrawn.
+This is the weakest-sourced entry on the board and it should be treated that way. Its verdict rests on a single forum post in which Google Pay is mentioned in passing alongside four other apps, with no app version, no build and no logs. A claim from that same post about PhonePe has since been withdrawn.
 
 The community-maintained compatibility list, which covers several hundred banking apps, does not list Google Pay at all. That is not evidence either way; it means nobody has filed a report there.
 
-If you are in India and you use UPI, your report is worth more here than anywhere else on the board — and this entry is the one that most needs it.
+If you are in India and you use UPI, your report is worth more here than anywhere else on the board, and this entry is the one that most needs it.

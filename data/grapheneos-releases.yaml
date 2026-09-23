@@ -7,7 +7,7 @@
 # slightly earlier than the date a user would have received the update.
 #
 # Validation checks the format and plausibility of a build string. A build not
-# listed here produces a warning, not an error — releases ship every few days
+# listed here produces a warning, not an error: releases ship every few days
 # and this list will always lag. Do not treat it as exhaustive.
 #
 # The list serves two purposes: the recent releases, and older builds that an

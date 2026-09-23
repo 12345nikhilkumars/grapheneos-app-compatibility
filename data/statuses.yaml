@@ -13,7 +13,7 @@ result:
   - value: works-with-setup
     label: Works with setup
     tone: warn
-    summary: Runs, but only after a change — a Play Services install, an exploit-protection exception, or a settings toggle.
+    summary: Runs, but only after a change, such as a Play Services install, an exploit-protection exception, or a settings toggle.
   - value: works-degraded
     label: Works, degraded
     tone: warn
@@ -25,7 +25,7 @@ result:
   - value: unavailable
     label: Unavailable
     tone: bad
-    summary: Cannot be installed at all — not offered, or removed after install.
+    summary: Cannot be installed at all, either not offered or removed after install.
   - value: unknown
     label: Unknown
     tone: muted
@@ -55,7 +55,7 @@ blocked_reason:
   - value: drm
     label: DRM
     tone: warn
-    summary: Protected content is capped at low resolution. GrapheneOS does support Widevine L1 on Pixels, so a cap means the provisioning path is broken rather than that L1 is unavailable — check it before assuming this is permanent.
+    summary: Protected content is capped at low resolution. GrapheneOS does support Widevine L1 on Pixels, so a cap means the provisioning path is broken rather than that L1 is unavailable. Check it before assuming this is permanent.
   - value: play-services-required
     label: Play Services required
     tone: warn

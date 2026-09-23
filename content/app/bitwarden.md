@@ -39,7 +39,7 @@ This entry is included as a counterweight to the broken ones. Most apps work, an
 
 ## The F-Droid caveat
 
-One difference is worth knowing before you choose a build. Bitwarden's official F-Droid build **excludes Firebase Messaging**, so live sync notifications do not work — the vault updates when you open the app or sync manually. That is a deliberate trade to keep the F-Droid build free of Play dependencies, not a bug.
+One difference is worth knowing before you choose a build. Bitwarden's official F-Droid build **excludes Firebase Messaging**, so live sync notifications do not work: the vault updates when you open the app or sync manually. That is a deliberate trade to keep the F-Droid build free of Play dependencies, not a bug.
 
 If you want push sync, install the Play Store build. Both are official; the difference is the messaging dependency.
 

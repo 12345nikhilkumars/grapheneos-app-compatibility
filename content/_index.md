@@ -24,4 +24,4 @@ So every app here carries three fields:
 
 **If you want to know about one app**, find it by country and type.
 
-**If you are deciding whether to switch**, read the country board for where you live. The apps that matter most — banking, payments, government — are the ones most likely to fail, and they are also the ones you cannot easily replace.
+**If you are deciding whether to switch**, read the country board for where you live. The apps that matter most (banking, payments, government) are the ones most likely to fail, and they are also the ones you cannot easily replace.

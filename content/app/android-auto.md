@@ -40,16 +40,16 @@ That is a wider failure than a wireless-specific regression, and it is worth pla
 
 Symptoms vary. Some people get a connection that drops every few minutes. Some get one that will not reconnect automatically. Some cannot get it to start at all.
 
-**Profile matters more than anything else here.** Android Auto needs to run in the owner profile. Reports of it failing in a secondary profile or in Private Space are common, and at least one user in the owner profile reports wireless working without trouble — which suggests some of the failures attributed to GrapheneOS are really failures in a non-owner profile.
+**Profile matters more than anything else here.** Android Auto needs to run in the owner profile. Reports of it failing in a secondary profile or in Private Space are common, and at least one user in the owner profile reports wireless working without trouble, which suggests some of the failures attributed to GrapheneOS are really failures in a non-owner profile.
 
 If you are testing Android Auto, test it in the owner profile before concluding anything.
 
 ## Technical detail
 
-This is not an attestation block — Android Auto does not check device integrity. The problems appeared around the Android 17 base and affect projection generally, which points at the Wi-Fi handshake or the projection service rather than at anything GrapheneOS changed deliberately.
+This is not an attestation block: Android Auto does not check device integrity. The problems appeared around the Android 17 base and affect projection generally, which points at the Wi-Fi handshake or the projection service rather than at anything GrapheneOS changed deliberately.
 
 A fix was merged upstream but reports continued afterwards. Because the status is genuinely unsettled and there is no confirmed fix, `fixability` is `possible-with-steps` rather than `not-possible`: the owner-profile requirement is a real, actionable step, and a merged fix that has not fully landed is not the same as an unfixable problem.
 
 ## If you depend on it
 
-Test before you switch, and test the specific thing you rely on — a cable result does not tell you anything about the wireless path. If Android Auto is central to how you use your car, treat it as the riskiest item on this board after payments.
+Test before you switch, and test the specific thing you rely on; a cable result does not tell you anything about the wireless path. If Android Auto is central to how you use your car, treat it as the riskiest item on this board after payments.

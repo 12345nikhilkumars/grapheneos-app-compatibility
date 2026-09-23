@@ -20,7 +20,7 @@ alternatives:
 reports: []
 ---
 
-DigiLocker holds government-issued documents in digital form — driving licence, PAN, vehicle registration, academic certificates. If it stops working, it takes your documents with it, which makes it one of the higher-stakes apps to test before committing to a new phone.
+DigiLocker holds government-issued documents in digital form: driving licence, PAN, vehicle registration, academic certificates. If it stops working, it takes your documents with it, which makes it one of the higher-stakes apps to test before committing to a new phone.
 
 **Nobody has reported testing this, and the search for existing reports came up empty too.** It is listed because it matters, not because there is an answer here.
 
@@ -30,10 +30,10 @@ If you run GrapheneOS in India and use DigiLocker, a report would be genuinely u
 
 ## Technical detail
 
-Government identity apps in India have tended to be stricter about device integrity than banking apps, and several use Aadhaar authentication flows that involve their own device checks. That makes this a plausible failure, but plausible is not the same as known — which is exactly why the entry is empty rather than guessed at.
+Government identity apps in India have tended to be stricter about device integrity than banking apps, and several use Aadhaar authentication flows that involve their own device checks. That makes this a plausible failure, but plausible is not the same as known, which is exactly why the entry is empty rather than guessed at.
 
 An entry with no reports is a valid state. It says the app is known to matter and unknown in practice, which is more useful than a fabricated status.
 
 ## What to do in the meantime
 
-The website is the fallback while this is unknown, and it covers reading and downloading your documents. Keep a printed or offline copy of anything you might need urgently — a licence or an insurance certificate — before you rely on the app on any phone, GrapheneOS or not.
+The website is the fallback while this is unknown, and it covers reading and downloading your documents. Keep a printed or offline copy of anything you might need urgently (a licence or an insurance certificate) before you rely on the app on any phone, GrapheneOS or not.

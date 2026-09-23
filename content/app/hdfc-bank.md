@@ -39,7 +39,7 @@ reports:
     result: works-with-setup
     blocked_reason: exploit-protection
     fixability: possible-with-steps
-    workaround: "Allow Native code debugging and Dynamic code loading for the HDFC app under Settings → Apps → HDFC Bank App → Exploit protection. Dynamic code loading from storage is the one that matters: with it restricted, the app reports an insecure device regardless of anything else. If it still refuses, check for remote-desktop apps such as AnyDesk or RustDesk, and for anything holding an accessibility service — the app detects those and treats them as tampering."
+    workaround: "Allow Native code debugging and Dynamic code loading for the HDFC app under Settings → Apps → HDFC Bank App → Exploit protection. Dynamic code loading from storage is the one that matters: with it restricted, the app reports an insecure device regardless of anything else. If it still refuses, check for remote-desktop apps such as AnyDesk or RustDesk, and for anything holding an accessibility service: the app detects those and treats them as tampering."
     tier: imported
     source: "https://github.com/PrivSec-dev/banking-apps-compat-report/issues/799"
   - date: 2026-07-16
@@ -72,7 +72,7 @@ If a banking app reports an insecure device on GrapheneOS and Play Integrity is 
 
 ## What actually happened
 
-After the `2026071100` update, the app began intermittently showing an "unsecured device" alert. It was not consistent — closing and reopening the app two or three times cleared it, every time it happened.
+After the `2026071100` update, the app began intermittently showing an "unsecured device" alert. It was not consistent: closing and reopening the app two or three times cleared it, every time it happened.
 
 The same update broke ICICI and Canara too, which was the clue that this was not a bank policy decision. A GrapheneOS maintainer traced it to the **V-KEY V-OS Mobile App Protection SDK**, which checks Linux mount IDs and breaks when mount namespaces are created after early boot. It was fixed in a follow-up release.
 
@@ -93,7 +93,7 @@ Two further things are worth knowing, both from the community tracker rather tha
 
 The V-KEY SDK is used by a number of Indian banking apps, which is why several failed together. It performs its own environment check rather than calling Play Integrity, and the check is sensitive to details of the Linux namespace layout that have nothing to do with whether the device is secure.
 
-Two things follow from that. First, "several banking apps broke at once" is usually an OS-level change rather than a coordinated decision by several banks. Second, a bank app naming custom firmware in its error message does not by itself mean the app can never work — it means a check failed, and checks can be fixed.
+Two things follow from that. First, "several banking apps broke at once" is usually an OS-level change rather than a coordinated decision by several banks. Second, a bank app naming custom firmware in its error message does not by itself mean the app can never work; it means a check failed, and checks can be fixed.
 
 ## On the browser fallback
 

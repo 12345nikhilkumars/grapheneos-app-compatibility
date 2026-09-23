@@ -80,7 +80,7 @@ Paytm refuses to run and tells you the device is running custom firmware. It has
 
 ## The pattern
 
-Paytm has oscillated, which is worse than being consistently broken — it means a working report is not evidence that it will keep working.
+Paytm has oscillated, which is worse than being consistently broken: it means a working report is not evidence that it will keep working.
 
 - **February 2026.** A report on the India thread: "Paytm formally blocks GrapheneOS now. Shows device modification or root detected right after play integrity notif."
 - **March 2026.** Version 10.75.6 is reported working.
@@ -91,7 +91,7 @@ A named firmware check is a deliberate block rather than a bug, and the app nami
 
 ## Technical detail
 
-A custom-firmware message means the app inspects the device rather than relying only on Play Integrity. Locking the bootloader does not satisfy this kind of check, and neither does installing sandboxed Play Services — the app is not asking about Play, it is asking about the operating system. The February report describes the firmware check firing *after* a Play Integrity notification, so both mechanisms are in play.
+A custom-firmware message means the app inspects the device rather than relying only on Play Integrity. Locking the bootloader does not satisfy this kind of check, and neither does installing sandboxed Play Services. The app is not asking about Play, it is asking about the operating system. The February report describes the firmware check firing *after* a Play Integrity notification, so both mechanisms are in play.
 
 `fixability` is `unknown` rather than `not-possible` only because nobody has documented a serious attempt to work around it. Given that the check is deliberate and enforced in the app, expect `not-possible` to be the eventual verdict.
 

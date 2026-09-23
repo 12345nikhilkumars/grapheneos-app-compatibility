@@ -48,7 +48,7 @@
     {{ with $app.developer }}<p class="app__dev">{{ . }}{{ with $app.package }} · <code>{{ . }}</code>{{ end }}</p>{{ end }}
   </header>
 
-  {{/* Layer 1 — the verdict. Answers the question in three seconds. */}}
+  {{/* Layer 1: the verdict. Answers the question in three seconds. */}}
   <section class="verdict" aria-label="Verdict">
     <div class="verdict__row">
       <span class="verdict__label">Status</span>
@@ -72,10 +72,10 @@
     {{ end }}
   </section>
 
-  {{/* Layer 2 — plain language. */}}
+  {{/* Layer 2: plain language. */}}
   <div class="prose app__body">{{ .Content }}</div>
 
-  {{/* Layer 3 — what to do, and what to do instead. Rendered whenever there is
+  {{/* Layer 3: what to do, and what to do instead. Rendered whenever there is
        either a workaround or a listed alternative, so an app with no reports
        but a known fallback still tells the reader something useful. */}}
   {{ if or $alts (and $row $row.latest) }}
@@ -133,7 +133,7 @@
     </section>
   {{ end }}
 
-  {{/* Layer 4 — by country. */}}
+  {{/* Layer 4: by country. */}}
   {{ if gt (len $app.by_country) 1 }}
     <section class="block">
       <h2>By country</h2>
@@ -166,12 +166,12 @@
     </section>
   {{ end }}
 
-  {{/* Layer 5 — evidence, collapsed. */}}
+  {{/* Layer 5: evidence, collapsed. */}}
   {{ $imported := false }}
   {{ range $app.reports }}{{ if eq .tier "imported" }}{{ $imported = true }}{{ end }}{{ end }}
 
   <details class="disclosure">
-    <summary>Technical detail — {{ len $app.reports }} report{{ if ne (len $app.reports) 1 }}s{{ end }}</summary>
+    <summary>Technical detail: {{ len $app.reports }} report{{ if ne (len $app.reports) 1 }}s{{ end }}</summary>
     <div class="disclosure__body">
       {{ if $app.reports }}
         <ul class="reports">
@@ -217,7 +217,7 @@
     </div>
   </details>
 
-  {{/* Layer 6 — contribute, collapsed. */}}
+  {{/* Layer 6: contribute, collapsed. */}}
   <details class="disclosure">
     <summary>Contribute a report</summary>
     <div class="disclosure__body">

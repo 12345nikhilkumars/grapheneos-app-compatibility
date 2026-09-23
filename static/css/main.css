@@ -6,7 +6,7 @@
    Neutrals are cool grey with a slight blue cast, so the status tones read as
    deliberate rather than as the only colour on the page. The accent is a
    saturated blue, chosen because it sits far from the green/amber/red used for
-   status — an accent that shares a hue with "Works" or "Broken" makes both
+   status: an accent that shares a hue with "Works" or "Broken" makes both
    harder to read.
 
    Status is never carried by colour alone. Every badge has a text label, so the
@@ -14,7 +14,7 @@
 
    Theming
 
-   `:root` holds the light values. Dark values are declared twice — once for an
+   `:root` holds the light values. Dark values are declared twice: once for an
    explicit `data-theme="dark"`, once behind `prefers-color-scheme` for readers
    with JavaScript disabled. The duplication is the price of the theme working
    without JS. Duplicating the light block instead, via `light-dark()`, would

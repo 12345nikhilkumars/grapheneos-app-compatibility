@@ -33,7 +33,7 @@ reports:
     result: works-with-setup
     blocked_reason: play-services-required
     fixability: possible-with-steps
-    workaround: "Grant the sandboxed Play Store and Play Services every permission they ask for — Nearby devices is the one that matters — turn on Exploit protection compatibility mode for PhonePe, set its battery usage to unrestricted, and sign in over mobile data rather than Wi-Fi. Registration is the step that fails, so the network you use while registering is part of the setup."
+    workaround: "Grant the sandboxed Play Store and Play Services every permission they ask for (Nearby devices is the one that matters), turn on Exploit protection compatibility mode for PhonePe, set its battery usage to unrestricted, and sign in over mobile data rather than Wi-Fi. Registration is the step that fails, so the network you use while registering is part of the setup."
     tier: imported
     source: "https://privsec.dev/posts/android/banking-applications-compatibility-with-grapheneos/"
   - date: 2026-06-29
@@ -64,7 +64,7 @@ reports:
 
 PhonePe works, and getting it to work takes specific setup rather than luck. Two independent sources agree on that, and both describe the same steps.
 
-**This entry has now been wrong in both directions, and the history is worth keeping.** It first said PhonePe flags your *account* as suspicious and warned readers to test with an account they could afford to lose. That claim came from a single forum post, was never reproduced, and was contradicted by the community compatibility list. It was removed. The replacement verdict — `broken` — was then drawn from *the same post*, which is not how this board is supposed to work, and that has now been corrected too.
+**This entry has now been wrong in both directions, and the history is worth keeping.** It first said PhonePe flags your *account* as suspicious and warned readers to test with an account they could afford to lose. That claim came from a single forum post, was never reproduced, and was contradicted by the community compatibility list. It was removed. The replacement verdict, `broken`, was then drawn from *the same post*, which is not how this board is supposed to work, and that has now been corrected too.
 
 ## What actually happens
 
@@ -80,6 +80,6 @@ If you are setting up PhonePe now, the setup above is the thing to try. If it fa
 
 ## Technical detail
 
-UPI apps sit on top of a bank-to-bank network with its own device binding rules, so a failure in the payment flow can originate in the app, in the NPCI layer, or in the issuing bank's checks. That is why the reason on the June report is recorded as `unknown` — nobody established it, and guessing would send the next person down a path that cannot work.
+UPI apps sit on top of a bank-to-bank network with its own device binding rules, so a failure in the payment flow can originate in the app, in the NPCI layer, or in the issuing bank's checks. That is why the reason on the June report is recorded as `unknown`: nobody established it, and guessing would send the next person down a path that cannot work.
 
 For contrast, the failures that *are* clearly attestation-driven in India look different: Paytm names the problem and refuses to continue. PhonePe's setup problems do not.

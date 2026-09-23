@@ -13,7 +13,7 @@ links:
 reports: []
 ---
 
-Instagram is expected to work — feed, stories, reels, DMs, and uploads behaving as they do on a stock device.
+Instagram is expected to work, with feed, stories, reels, DMs and uploads behaving as they do on a stock device.
 
 **Nobody has filed a report for this app.** The expectation comes from the absence of any device integrity check in Meta's consumer apps, not from a test recorded here. The previous version of this entry cited a forum thread that does not mention Instagram, which is not evidence, and it has been removed.
 

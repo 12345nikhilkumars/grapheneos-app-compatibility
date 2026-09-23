@@ -20,7 +20,7 @@
       {{ .Params.total }} app{{ if ne .Params.total 1 }}s{{ end }} tracked across
       {{ len .Params.types }} service type{{ if ne (len .Params.types) 1 }}s{{ end }}{{ if gt (int .Params.reported) 0 }},
       {{ .Params.reported }} with at least one report{{ else }}, none of them reported on yet{{ end }}.
-      A status only reflects reports from this country — an app working elsewhere may still fail here.
+      A status only reflects reports from this country. An app working elsewhere may still fail here.
     </p>
   </header>
 
@@ -54,7 +54,7 @@
     <h2>Reading this page</h2>
     <p>
       Apps are ordered worst first. A status shown here is derived from reports
-      filed from {{ .Params.countryName }} only — where no report exists, the app
+      filed from {{ .Params.countryName }} only. Where no report exists, the app
       shows as unknown rather than assuming it works.
     </p>
     <p><a href="{{ "/about/methodology/" | relURL }}">What the statuses mean →</a></p>

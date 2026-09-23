@@ -28,7 +28,7 @@ reports: []
 
 Google Maps is expected to work, including navigation, live traffic, and saved places. It needs Play Services, and the sandboxed install satisfies that requirement without giving Google privileged access to the device.
 
-**Nobody has filed a report for this app, though.** The paragraph above is based on how sandboxed Play Services generally behaves — GrapheneOS documents near-complete app compatibility through it — not on a test someone ran and recorded here. An earlier version of this entry carried a source link to a forum thread that does not mention Maps at all, which was not good enough. It has been removed rather than replaced with a guess.
+**Nobody has filed a report for this app, though.** The paragraph above is based on how sandboxed Play Services generally behaves (GrapheneOS documents near-complete app compatibility through it), not on a test someone ran and recorded here. An earlier version of this entry carried a source link to a forum thread that does not mention Maps at all, which was not good enough. It has been removed rather than replaced with a guess.
 
 If you use Maps on GrapheneOS, a report would close this out. It is a one-line contribution and it would replace an assumption with a fact.
 
@@ -40,4 +40,4 @@ Location accuracy is unchanged. GrapheneOS does not degrade the location stack; 
 
 ## Technical detail
 
-If Maps fails to get a location fix, the usual cause is that Play Services itself has been denied location permission — check the sandboxed Play Services entry in Settings rather than the Maps entry, because the permission is held one level down.
+If Maps fails to get a location fix, the usual cause is that Play Services itself has been denied location permission. Check the sandboxed Play Services entry in Settings rather than the Maps entry, because the permission is held one level down.

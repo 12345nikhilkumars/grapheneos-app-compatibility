@@ -34,7 +34,7 @@ def main() -> int:
     print(f"# Stale entries as of {generated}")
     print()
     print(f"A verdict is treated as stale once it is more than {window} days old.")
-    print("Nothing here is wrong — it is simply old enough that it may no longer be true.")
+    print("Nothing here is wrong. It is simply old enough that it may no longer be true.")
     print("Re-testing one of these, or confirming it still holds, is a useful contribution.")
     print()
 

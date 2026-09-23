@@ -1,4 +1,4 @@
-/* GrapheneOS Info Board — progressive enhancement.
+/* GrapheneOS Info Board: progressive enhancement.
  *
  * Two independent features, neither of which the site depends on:
  *

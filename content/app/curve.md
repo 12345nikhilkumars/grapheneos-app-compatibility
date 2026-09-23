@@ -76,7 +76,7 @@ That is the whole story: a feature that was broken, was reported repeatedly, and
 
 ## Why it matters here
 
-Google Wallet's tap-to-pay does not work on GrapheneOS and is not going to. Curve is the alternative that people actually use, because it does not check whether the operating system is certified — it never used Play Integrity to gate itself.
+Google Wallet's tap-to-pay does not work on GrapheneOS and is not going to. Curve is the alternative that people actually use, because it does not check whether the operating system is certified. It never used Play Integrity to gate itself.
 
 One limitation worth stating plainly: **Curve does not support American Express cards.** If your card is Amex, Curve is not an option for it.
 
@@ -84,4 +84,4 @@ One limitation worth stating plainly: **Curve does not support American Express 
 
 Curve sits between the terminal and your underlying cards, so a payment goes through Curve rather than directly to your bank. That has a practical consequence on GrapheneOS: it does not depend on your bank supporting contactless in its own app, which several do not.
 
-The reports that make up this entry come from the community compatibility tracker, which is also where the fixes were confirmed. Where a report is undated in detail — the September 2025 and May 2026 failures do not name a GrapheneOS build — the field is left empty rather than guessed at.
+The reports that make up this entry come from the community compatibility tracker, which is also where the fixes were confirmed. Where a report is undated in detail (the September 2025 and May 2026 failures do not name a GrapheneOS build), the field is left empty rather than guessed at.

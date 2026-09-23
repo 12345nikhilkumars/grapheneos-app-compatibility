@@ -40,7 +40,7 @@ An app with no reports yet is a valid entry. It shows as unknown, which is more 
 
 ## Getting the fields right
 
-**`blocked_reason`** — only set it if you know why it failed. A wrong reason is worse than an honest gap.
+**`blocked_reason`**: only set it if you know why it failed. A wrong reason is worse than an honest gap.
 
 | What you saw | Likely reason |
 |---|---|
@@ -50,7 +50,7 @@ An app with no reports yet is a valid entry. It shows as unknown, which is more 
 | Runs, but a feature is capped | `drm` or `push-delivery` |
 | Fails only on mobile data, works on Wi-Fi | `carrier-provisioning` |
 
-**`fixability`** — this is the field people come here for. `not-possible` means stop looking. `unknown` means nobody has tried, and you might be the one who finds out. Do not use `not-possible` unless you are sure.
+**`fixability`**: this is the field people come here for. `not-possible` means stop looking. `unknown` means nobody has tried, and you might be the one who finds out. Do not use `not-possible` unless you are sure.
 
 ## Trust tiers
 

@@ -28,7 +28,7 @@ reports:
 
 Google Messages works for SMS and MMS. The app runs, messages send, and nothing crashes.
 
-**RCS** — the modern replacement for SMS, with typing indicators, read receipts, large images and end-to-end encryption in one-to-one chats — has a history of working, then not working, then partly working again. That history now has a resolution, which is more than this entry used to be able to say.
+**RCS**, the modern replacement for SMS, with typing indicators, read receipts, large images and end-to-end encryption in one-to-one chats, has a history of working, then not working, then partly working again. That history now has a resolution, which is more than this entry used to be able to say.
 
 ## What happened, in order
 
@@ -40,8 +40,8 @@ So the current state is: SMS and MMS work unaided, and RCS works once the ICC au
 
 ## Technical detail
 
-RCS registration depends on a handshake between the carrier, Google's Jibe backend, and the device. The failure was never a Play Integrity block — the app was not being rejected for running a modified OS. It was a provisioning problem, which is why it came and went, and why it affected some carriers and not others.
+RCS registration depends on a handshake between the carrier, Google's Jibe backend, and the device. The failure was never a Play Integrity block: the app was not being rejected for running a modified OS. It was a provisioning problem, which is why it came and went, and why it affected some carriers and not others.
 
 That distinction is the reason this entry stayed as `unknown` for a long time. A provisioning problem looks like a compatibility problem from the outside, and guessing at the mechanism would have sent people to fix the wrong thing.
 
-If RCS matters to you, check the current state before relying on it. Do not assume it works because it worked three months ago — and equally, do not assume it is broken because it broke last year.
+If RCS matters to you, check the current state before relying on it. Do not assume it works because it worked three months ago, and equally, do not assume it is broken because it broke last year.

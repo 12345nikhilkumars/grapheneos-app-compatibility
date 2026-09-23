@@ -6,8 +6,8 @@ Installation is not covered. It is straightforward and already well documented e
 
 ## What is here
 
-- **Apps** — browse by country, then by service type. Every app carries a status, a reason for failure, and whether it can be worked around.
-- **Methodology** — what the statuses mean, and how to judge whether an entry is worth believing.
+- **Apps**: browse by country, then by service type. Every app carries a status, a reason for failure, and whether it can be worked around.
+- **Methodology**: what the statuses mean, and how to judge whether an entry is worth believing.
 
 ## The fields that matter
 

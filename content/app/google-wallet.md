@@ -37,7 +37,7 @@ reports:
     result: broken
     blocked_reason: play-integrity
     fixability: possible-via-workaround
-    workaround: "Use a bank app with its own NFC stack, Curve Pay, or a watch. Google Wallet itself cannot be made to work — the check is enforced on Google's side."
+    workaround: "Use a bank app with its own NFC stack, Curve Pay, or a watch. Google Wallet itself cannot be made to work: the check is enforced on Google's side."
     tier: imported
     source: "https://discuss.grapheneos.org/d/38083-nfc"
 ---
@@ -52,10 +52,10 @@ This is the most commonly reported thing that simply does not work on GrapheneOS
 
 ## Technical detail
 
-Tap-to-pay requires the app to pass a Play Integrity check that the device is running an unmodified, Google-approved operating system. GrapheneOS cannot pass it, and the decision is made on Google's servers rather than inside the app, so there is nothing to patch locally. Locking the bootloader does not help — the check fails either way.
+Tap-to-pay requires the app to pass a Play Integrity check that the device is running an unmodified, Google-approved operating system. GrapheneOS cannot pass it, and the decision is made on Google's servers rather than inside the app, so there is nothing to patch locally. Locking the bootloader does not help; the check fails either way.
 
 Card storage and pass display do not require the check, which is why they keep working.
 
-The alternatives work for a different reason in each case. A bank app with its own NFC stack never asks Google anything, so it is unaffected. Curve performs host card emulation itself and is not gated on attestation at all — its setup step was broken for most of a year and was fixed in June 2026, which is a reminder that "does not work" and "does not work yet" look identical from the outside. A watch attests on its own hardware, so the phone's verdict is irrelevant.
+The alternatives work for a different reason in each case. A bank app with its own NFC stack never asks Google anything, so it is unaffected. Curve performs host card emulation itself and is not gated on attestation at all. Its setup step was broken for most of a year and was fixed in June 2026, which is a reminder that "does not work" and "does not work yet" look identical from the outside. A watch attests on its own hardware, so the phone's verdict is irrelevant.
 
 If you rely on tap-to-pay, the thing to check before switching is whether your own bank has a native NFC option. That is a question for the bank, not for GrapheneOS.

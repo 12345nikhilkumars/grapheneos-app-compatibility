@@ -3,7 +3,7 @@
      Lives in a partial rather than directly in layouts/index.searchindex.json so
      the template's whitespace does not end up in the emitted file. A partial
      that calls return discards everything it printed, which keeps the payload
-     down to the JSON itself — this file is fetched on the reader's first
+     down to the JSON itself: this file is fetched on the reader's first
      keystroke, so the difference is worth having.
      
      Reads data/derived/apps.json, the same source every page reads, so a search

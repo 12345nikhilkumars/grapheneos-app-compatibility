@@ -187,7 +187,7 @@ def main() -> int:
             continue
 
         # Country totals are counts, not a verdict. A country is a container, not
-        # something that can work or break — a single failing app must not be
+        # something that can work or break: a single failing app must not be
         # rendered as "this country is broken". Nor may an untested country be
         # rendered as working, which is what a worst-of badge defaulting to
         # "works" did for every country with no reports at all. There is

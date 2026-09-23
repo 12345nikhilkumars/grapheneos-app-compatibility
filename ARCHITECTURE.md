@@ -19,7 +19,7 @@ Every existing resource stops at "this app is broken". None record why it broke 
 | Hosting | GitHub Pages, built by GitHub Actions |
 | Code licence | AGPL-3.0-or-later |
 | Content licence | CC BY-SA 4.0 |
-| Audience | Layered — plain language visible, technical detail collapsed |
+| Audience | Layered: plain language visible, technical detail collapsed |
 | Region | Global-first, India as a first-class country board |
 | App URLs | One country-neutral page per app at `/app/<slug>/` |
 | Filter matrix | Deferred. JSON feed kept. |
@@ -30,11 +30,11 @@ Every existing resource stops at "this app is broken". None record why it broke 
 ## Site structure
 
 ```
-/                                    Home — board types
-/apps/                               Apps — list of countries
-/apps/<cc>/                          Country — service types with a status rollup
-/apps/<cc>/<service-type>/           Service type — app rows: name, status, why
-/app/<slug>/                         App detail — country-neutral
+/                                    Home: board types
+/apps/                               Apps: list of countries
+/apps/<cc>/                          Country: service types with a status rollup
+/apps/<cc>/<service-type>/           Service type: app rows with name, status, why
+/app/<slug>/                         App detail: country-neutral
 /about/                              What this is
 /about/methodology/                  Statuses, trust model, how to read an entry
 /about/contribute/                   CONTRIBUTING, rendered
@@ -66,18 +66,18 @@ Home is a hub of board types. One is built.
 
 ### Service types
 
-Thirteen fixed types, listed in `data/service-types.yaml`. A closed list stops the taxonomy sprawling — adding one is a deliberate edit rather than something that happens by accident.
+Thirteen fixed types, listed in `data/service-types.yaml`. A closed list stops the taxonomy sprawling: adding one is a deliberate edit rather than something that happens by accident.
 
 ### App page reading order
 
 Layer 1 answers the question in three seconds. The rest is for people who need more. Technical detail collapses with native `<details>`, so the layering costs no JavaScript.
 
-1. **Verdict card** — status, fixability, reason, confidence, last verified
-2. **Plain-language summary** — what happens, in two sentences
-3. **What to do** — workaround steps, then the alternatives with what each one covers
-4. **By country** — status per region
-5. *collapsed* — **Technical detail**: reports table, build numbers, devices, profiles
-6. *collapsed* — **Contribute**: how to add a report
+1. **Verdict card**: status, fixability, reason, confidence, last verified
+2. **Plain-language summary**: what happens, in two sentences
+3. **What to do**: workaround steps, then the alternatives with what each one covers
+4. **By country**: status per region
+5. *collapsed*: **Technical detail**, reports table, build numbers, devices, profiles
+6. *collapsed*: **Contribute**, how to add a report
 
 Most arrivals never see the home page. They come from a search for "does HDFC work on GrapheneOS" and land directly on an app page. Every app page must answer the question without navigation.
 
@@ -91,9 +91,9 @@ Most arrivals never see the home page. They come from a search for "does HDFC wo
 | Without JavaScript | Everything structural still works. Search and the theme toggle are the only losses, and the system colour scheme is still honoured. |
 | Verdicts and counts | A verdict belongs to an app in a country. A country or a service type is a container and carries counts, never a verdict. |
 
-The theme's dark token block is written twice — once for the explicit attribute, once behind the media query. The duplication is deliberate: `light-dark()` would express it once, but a browser without support would render an unstyled page rather than the light theme.
+The theme's dark token block is written twice: once for the explicit attribute, once behind the media query. The duplication is deliberate: `light-dark()` would express it once, but a browser without support would render an unstyled page rather than the light theme.
 
-A country is not something that can work or break, and neither is a service type. Containers therefore state how many apps they hold, how many anyone has reported on, and — only when non-zero — how many are broken, unavailable or degraded. Working apps are the baseline and get no badge. A container nobody has tested says so, rather than defaulting to a working status. The rule lives in `layouts/partials/problem-counts.html` so the home page, the app index and the country pages cannot drift apart.
+A country is not something that can work or break, and neither is a service type. Containers therefore state how many apps they hold, how many anyone has reported on, and, only when non-zero, how many are broken, unavailable or degraded. Working apps are the baseline and get no badge. A container nobody has tested says so, rather than defaulting to a working status. The rule lives in `layouts/partials/problem-counts.html` so the home page, the app index and the country pages cannot drift apart.
 
 The derived data carries no `worst` key at container level, so no template can reintroduce a container verdict by accident.
 
@@ -181,7 +181,7 @@ reports:
 
 `blocked_reason` and `fixability` are the fields no comparable resource has. `covers` is the field that keeps the alternatives honest.
 
-Every enum is declared twice — in `data/statuses.yaml` for display, and in the schema for validation. JSON Schema cannot read YAML, so `validate.py` asserts the two lists are identical and fails the build if they drift.
+Every enum is declared twice: in `data/statuses.yaml` for display, and in the schema for validation. JSON Schema cannot read YAML, so `validate.py` asserts the two lists are identical and fails the build if they drift.
 
 ### Nullable fields
 
@@ -191,7 +191,7 @@ This exists so an imported report can cite a forum post that never stated a buil
 
 ### Derived at build time
 
-Never authored — an authored verdict drifts away from the reports it claims to summarise.
+Never authored: an authored verdict drifts away from the reports it claims to summarise.
 
 | Value | Rule |
 |---|---|
@@ -207,13 +207,13 @@ Never authored — an authored verdict drifts away from the reports it claims to
 Four mechanisms, layered. They cover different failure modes.
 
 1. **Dated, versioned, expiring.** Every report carries a date, a GrapheneOS build and a device. A monthly job opens one pinned issue listing everything past the staleness threshold, grouped by country.
-2. **Confidence from report count.** Binary result plus a count, never an average — averaging two conflicting reports describes neither. Displayed as "3 reports agree · latest 2026-08-14".
+2. **Confidence from report count.** Binary result plus a count, never an average: averaging two conflicting reports describes neither. Displayed as "3 reports agree · latest 2026-08-14".
 3. **Four-tier verification.** `maintainer` and `trusted` mean a named reviewer reproduced it. `community` means one unverified report. `imported` means nobody here has run it at all.
 4. **Source per claim.** An imported report links to the public post it came from, so a reader can check it rather than trust the summary.
 
 **No bare status anywhere.** Every verdict shows status, report count, last-verified date and tier. A status without provenance is a claim, not information.
 
-**External community datasets are a source, not an authority.** Most banking entries draw on the PrivSec.dev compatibility tracker, which GrapheneOS points readers to and disclaims in the same breath. Its listings carry no per-app test date, so a listing is cited in prose and never converted into a dated report — doing so would invent a date and let a summary outrank a specific observation. Its report threads are dated and are used as reports. Where a listing and a dated report disagree, the report wins and the disagreement is recorded.
+**External community datasets are a source, not an authority.** Most banking entries draw on the PrivSec.dev compatibility tracker, which GrapheneOS points readers to and disclaims in the same breath. Its listings carry no per-app test date, so a listing is cited in prose and never converted into a dated report: doing so would invent a date and let a summary outrank a specific observation. Its report threads are dated and are used as reports. Where a listing and a dated report disagree, the report wins and the disagreement is recorded.
 
 ## CI
 
@@ -255,7 +255,7 @@ Adding these is a matter of sourcing them properly. Several were identified duri
 
 - Repository name, and whether a custom domain is wanted.
 - Who reviews pull requests. Review capacity determines what `maintainer` and `trusted` are worth.
-- Staleness threshold — currently 180 days, possibly per service type.
+- Staleness threshold: currently 180 days, possibly per service type.
 - India UPI status is contested. Forum threads report Google Pay stopped, Paytm and BHIM blocking custom firmware, and PhonePe flagging accounts; one third-party guide claims they all work, but that source is machine-generated. The Indian payment entries currently rest on a small number of forum posts. Nothing confident should be published about India UPI until it is tested by hand.
 - Whether a country page with one app is worth generating. Adding a bank that operates across Europe currently creates nine near-empty boards.
 - Migration content is out of scope and is the largest gap in every existing resource.

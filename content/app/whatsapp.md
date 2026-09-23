@@ -37,6 +37,6 @@ Two things are worth knowing.
 
 The app requires Play Services, and the sandboxed Play Services installs satisfy that requirement without granting Google any privileged access.
 
-No attestation check blocks WhatsApp itself. Reports of WhatsApp refusing to run are almost always reports of a *different* problem — most often the UPI payments feature inside WhatsApp, which is a separate integration with its own restrictions and is covered under the India payment entries.
+No attestation check blocks WhatsApp itself. Reports of WhatsApp refusing to run are almost always reports of a *different* problem, most often the UPI payments feature inside WhatsApp, which is a separate integration with its own restrictions and is covered under the India payment entries.
 
 The Drive backup detail is a good example of why this board asks for the build and the setup rather than just a verdict. "It works" and "it does not work" were both being reported by people who were right about their own phone, and the difference was install order.
