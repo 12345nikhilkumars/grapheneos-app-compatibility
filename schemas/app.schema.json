@@ -206,6 +206,7 @@
             "play-integrity",
             "safetynet",
             "custom-firmware-detection",
+            "exploit-protection",
             "hardware-attestation",
             "drm",
             "play-services-required",

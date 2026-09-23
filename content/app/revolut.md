@@ -20,9 +20,33 @@ alternatives:
     label: Revolut's web app
     covers: partial
     detail: "web.revolut.com gives balances, statements, transfers, card controls and top-ups."
-    limitation: "It does not help if your account has already been flagged. Revolut's block is applied to the account rather than only to the device, so the website may be restricted too. If that has happened, the only route is Revolut support."
+    limitation: "Revolut treats the web app as a fallback rather than a full client. Some flows push you back to the phone, and it is not a way to sign up."
     url: https://www.revolut.com/
 reports:
+  - date: 2026-09-10
+    build: null
+    device: null
+    profile: null
+    country: GB
+    play: sandboxed
+    result: works
+    blocked_reason: none
+    fixability: not-applicable
+    workaround: null
+    tier: imported
+    source: "https://privsec.dev/posts/android/banking-applications-compatibility-with-grapheneos/"
+  - date: 2026-09-02
+    build: null
+    device: null
+    profile: null
+    country: GB
+    play: sandboxed
+    result: works
+    blocked_reason: none
+    fixability: not-applicable
+    workaround: null
+    tier: imported
+    source: "https://github.com/PrivSec-dev/banking-apps-compat-report/issues/90"
   - date: 2026-08-06
     build: null
     device: null
@@ -30,37 +54,33 @@ reports:
     country: GB
     play: sandboxed
     result: broken
-    blocked_reason: custom-firmware-detection
-    fixability: not-possible
-    workaround: null
+    blocked_reason: play-integrity
+    fixability: possible-via-workaround
+    workaround: "Sign in to a throwaway Google account first, then install Revolut through the sandboxed Play Store. GrapheneOS reported that this worked for most users while it worked on a proper fix."
     tier: imported
     source: "https://cybernews.com/privacy/grapheneos-says-revolut-is-blocking-users-again-and-this-time-its-personal/"
 ---
 
-Revolut does not work on GrapheneOS, and unlike most entries on this board it is not an accident. The company is reported to detect GrapheneOS specifically and to block the account rather than only the app.
+Revolut works on GrapheneOS. It has been broken twice by Revolut's own device checks, and the second episode cleared in September 2026 with an app update.
 
-This is the most serious banking problem documented for GrapheneOS, because the failure is not confined to the phone. Affected users report being told to factory-reset to a stock OS, and some report losing access to their account rather than just to the app.
+**An earlier version of this entry said Revolut blocks your account, not just your phone, and told readers to expect a factory reset to stock.** That is not what the source it cited says, and it has been removed. The reports were about the app refusing to run and logins failing — device-level blocks. Nobody in the record describes Revolut closing an account over GrapheneOS. Treating an unsupported claim as the board's most serious warning was the wrong call, and it is corrected here rather than quietly edited away.
 
-**If you bank with Revolut and are considering GrapheneOS, read this before you switch.**
+## The pattern
 
-## The timeline
+Revolut's checks come and go, and each cycle looks the same: the app stops working, the community finds a workaround, Revolut changes something, and it starts working again.
 
-- **Late 2024.** Reports begin of Revolut refusing to run on custom firmware. The community works on workarounds; some succeed for a while.
-- **Through 2025.** The block becomes less consistent, then returns.
-- **August 2026.** The GrapheneOS project publicly accuses Revolut of deliberately targeting its users again, with new detection methods. This is where the current verdict comes from.
+- **January 2025.** Revolut first blocks the OS. A community workaround is found.
+- **August 2026.** GrapheneOS says publicly that Revolut has added checks aimed specifically at its build characteristics, beyond ordinary Play Integrity. A workaround is published, and the project says a fix is in development.
+- **September 2026.** An app update resolves it. The reporter's read is that this was an A/B test that broke more than just GrapheneOS users — some less common stock devices hit it too — and that it was reverted under pressure.
 
-The pattern — detection, workaround, new detection — is why this entry is recorded as `not-possible`. It is not that nobody has found a way around it. It is that the workarounds keep being closed, and each cycle risks the account rather than the app.
+That last point is the interesting one. A break that also hits stock devices is a bug, not a policy. It is a different thing from an app that deliberately checks for custom firmware and refuses to run, and this entry is recorded as `works` on that basis.
+
+## If it breaks again
+
+The workaround that worked in August 2026 was to sign in to a throwaway Google account and then install Revolut through the sandboxed Play Store. If the app fails after an update, retry before concluding anything — twice now, the fix has arrived within weeks.
 
 ## Technical detail
 
-Revolut performs its own environment checks rather than relying only on Play Integrity. Reports describe the check running during sign-in, with the app refusing to proceed once it decides the device is not stock. Locking the bootloader does not change the outcome, and neither does installing sandboxed Play Services — the app is asking about the operating system.
+The August 2026 episode was reported as Play Integrity plus checks on build characteristics unique to GrapheneOS. Play Integrity on its own is not the whole story: GrapheneOS passes the basic integrity check and fails the device-certification one, which is a deliberate policy choice by Google rather than a security finding about the OS.
 
-Because the response is applied at account level, the usual advice about workarounds does not apply. Retrying, reinstalling, or clearing data is more likely to look like suspicious activity than to help.
-
-## What to do instead
-
-Keep Revolut on a stock device if you need it, and use a different bank for the GrapheneOS phone. The compatibility list linked above is organised by country and is the practical way to find one — many banks in the same countries have no device check at all, and the difference between them is not something you can predict from the brand.
-
-## A note on scope
-
-This entry exists because it was missing. The board previously covered banking problems in India in detail while omitting the best-documented banking failure in Europe, which was a real gap rather than a judgement about which countries matter.
+Because Revolut enforces at the certification level, a bootloader relock does not help, and neither does installing sandboxed Play Services — the app is asking about the operating system's certification, not about whether Play is present.

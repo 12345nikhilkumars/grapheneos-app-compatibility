@@ -30,6 +30,18 @@ alternatives:
     limitation: "Requires going there, and branch hours."
     url: null
 reports:
+  - date: 2026-07-27
+    build: null
+    device: pixel-9
+    profile: owner
+    country: IN
+    play: sandboxed
+    result: works-with-setup
+    blocked_reason: exploit-protection
+    fixability: possible-with-steps
+    workaround: "Allow Native code debugging and Dynamic code loading for the HDFC app under Settings → Apps → HDFC Bank App → Exploit protection. Dynamic code loading from storage is the one that matters: with it restricted, the app reports an insecure device regardless of anything else. If it still refuses, check for remote-desktop apps such as AnyDesk or RustDesk, and for anything holding an accessibility service — the app detects those and treats them as tampering."
+    tier: imported
+    source: "https://github.com/PrivSec-dev/banking-apps-compat-report/issues/799"
   - date: 2026-07-16
     build: null
     device: null
@@ -44,9 +56,19 @@ reports:
     source: "https://github.com/GrapheneOS/os-issue-tracker/issues/8311"
 ---
 
-The HDFC app works on GrapheneOS. It was broken for a few days in July 2026, and the cause turned out to be GrapheneOS rather than HDFC.
+The HDFC app works on GrapheneOS, with one per-app setting to check. It was broken for a few days in July 2026, and the cause turned out to be GrapheneOS rather than HDFC.
 
 **This entry previously said the opposite.** It claimed HDFC detected custom firmware and refused to run, that there was no workaround, and that the verdict was `not-possible`. That was wrong, and it is the kind of wrong that costs someone a phone purchase.
+
+It was then wrong in a smaller way: for a while it said `works` with nothing to fix, which was also too generous. The app works, but on some devices it needs an exploit protection setting changed first, and on the Pixel 10 series it has not been made to work at all.
+
+## The thing worth taking away
+
+Most failures on this board are an app deciding the operating system is unacceptable. This one is the opposite, and it is the reason a separate reason code exists for it: **GrapheneOS's own hardening was the problem.**
+
+The app's anti-tamper SDK inspects how the app was loaded, and GrapheneOS's restrictions on dynamic code loading look to it exactly like tampering. Nothing about the device is insecure, and no amount of relocking the bootloader or reinstalling Play Services changes it. One per-app toggle does.
+
+If a banking app reports an insecure device on GrapheneOS and Play Integrity is clearly not involved, check exploit protection before concluding the bank has blocked the platform.
 
 ## What actually happened
 
@@ -60,7 +82,12 @@ So: an OS regression that a third-party security SDK tripped over, found and fix
 
 Update GrapheneOS. If you are on a build from around `2026071100`, that is the whole fix.
 
-If the app refuses to run on a current build, that is a new and different problem, and it is worth a report — see the contribute section below.
+If the app still refuses to run on a current build, check the exploit protection settings before anything else. Under **Settings → Apps → HDFC Bank App → Exploit protection**, allow **Native code debugging** and **Dynamic code loading**. The second one is the one that matters: with dynamic code loading restricted, the app reports an insecure device no matter what else you change, and it reports it in a way that looks like a firmware check.
+
+Two further things are worth knowing, both from the community tracker rather than from GrapheneOS:
+
+- **Another app on the phone can trip it.** The check is an anti-tamper SDK, and it treats remote-desktop tools such as AnyDesk and RustDesk, and anything holding an accessibility service, as evidence of tampering. If the app works for other people on the same build, this is the first thing to look at.
+- **The Pixel 10 series is unresolved.** As of July 2026 nobody had reported getting HDFC working on a Pixel 10, including on a clean device with only Play Services, the Play Store and the app itself installed. If you are on a Pixel 10, treat this entry as unproven for your device.
 
 ## Technical detail
 

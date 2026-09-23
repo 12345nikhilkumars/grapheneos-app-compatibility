@@ -20,7 +20,7 @@ alternatives:
     label: Curve Pay
     covers: partial
     detail: "Curve issues a virtual card and performs contactless payment itself through host card emulation. Once it is activated, set it as the default wallet under Settings, Connected devices, Connection preferences, NFC, Contactless payments."
-    limitation: "Activation does not succeed for everyone, and the setup is fussy: Play Services must be installed with at least network permission, and a custom DNS server must not be blocking anything during first setup. Once it works it tends to keep working."
+    limitation: "Curve's activation step was broken for about nine months and was fixed in version 5.42.0 in June 2026, so update the app before concluding it does not work. Curve also does not support American Express cards. Its own entry covers the detail."
     url: https://www.curve.com/
   - kind: hardware
     label: A watch, or a physical card
@@ -56,6 +56,6 @@ Tap-to-pay requires the app to pass a Play Integrity check that the device is ru
 
 Card storage and pass display do not require the check, which is why they keep working.
 
-The alternatives work for a different reason in each case. A bank app with its own NFC stack never asks Google anything, so it is unaffected. Curve performs host card emulation itself and is not gated on attestation, though its activation step is unreliable. A watch attests on its own hardware, so the phone's verdict is irrelevant.
+The alternatives work for a different reason in each case. A bank app with its own NFC stack never asks Google anything, so it is unaffected. Curve performs host card emulation itself and is not gated on attestation at all — its setup step was broken for most of a year and was fixed in June 2026, which is a reminder that "does not work" and "does not work yet" look identical from the outside. A watch attests on its own hardware, so the phone's verdict is irrelevant.
 
 If you rely on tap-to-pay, the thing to check before switching is whether your own bank has a native NFC option. That is a question for the bank, not for GrapheneOS.

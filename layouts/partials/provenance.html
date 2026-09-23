@@ -9,7 +9,7 @@
   {{ if not $row.reported }}
     <span class="provenance__none">No reports yet for this country</span>
   {{ else }}
-    <span>{{ $row.confidence }} report{{ if ne (int $row.confidence) 1 }}s{{ end }} agree</span>
+    <span>{{ if eq (int $row.confidence) 1 }}{{ $row.confidence }} report agrees{{ else }}{{ $row.confidence }} reports agree{{ end }}</span>
     <span aria-hidden="true">·</span>
     <span>last verified <time datetime="{{ $row.last_verified }}">{{ $row.last_verified }}</time></span>
     {{ if $row.tier }}
@@ -18,7 +18,7 @@
     {{ end }}
     {{ if $row.dissent }}
       <span aria-hidden="true">·</span>
-      <span class="provenance__dissent">{{ $row.dissent }} report{{ if ne $row.dissent 1 }}s{{ end }} disagree</span>
+      <span class="provenance__dissent">{{ if eq (int $row.dissent) 1 }}{{ $row.dissent }} report disagrees{{ else }}{{ $row.dissent }} reports disagree{{ end }}</span>
     {{ end }}
     {{ if $row.stale }}
       <span aria-hidden="true">·</span>

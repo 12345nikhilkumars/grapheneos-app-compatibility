@@ -37,11 +37,18 @@ reports:
     source: "https://discuss.grapheneos.org/d/37215-nearly-all-indian-upi-apps-have-blocked-payments-on-grapheneos"
 ---
 
-UPI payments through Google Pay stopped working for GrapheneOS users. The app runs and the rest of it behaves normally, but the payment flow does not complete.
+UPI payments through Google Pay have been reported as broken, and the evidence is genuinely mixed rather than merely thin.
 
-This is part of a wider pattern: the Indian UPI apps tracked on this board — Google Pay, PhonePe, Paytm, BHIM — all fail, and they fail in different ways. That suggests the restriction is not one app's decision but something in the UPI stack or in how these apps verify a device.
+**The framing this entry used to carry is now out of date, and it was too bleak.** It said the Indian UPI apps "all fail". They do not. PhonePe works with a specific setup, HDFC's app works with one exploit protection setting changed, and Curve handles contactless. What fails is narrower than that: Paytm and BHIM are the two that are actually blocked. Treating the whole rail as dead overstated the problem in the direction that costs someone a phone.
 
-**Do not plan around UPI working on GrapheneOS until you have tested it yourself on a current build.** This is the single most consequential thing to check before switching in India.
+## What is actually reported
+
+Two threads disagree, and the disagreement is informative:
+
+- One report says Google Pay stopped working for payments, with the app itself behaving normally otherwise.
+- The longer India thread reports it working for some people and not others, with NFC payments failing, one user stuck at the SMS step during setup, and a workaround: **enable Dynamic code loading from storage** for the app under `Settings → Apps → Google Pay → Exploit protection`. That is the same setting that resolves HDFC's "unsecured device" error, which makes it the first thing worth trying here.
+
+If you are setting Google Pay up, change that setting before concluding anything.
 
 ## Technical detail
 
@@ -51,6 +58,8 @@ The `fixability` value is `unknown` rather than `not-possible` for the same reas
 
 ## On the sources
 
-The reports behind the Indian payment entries come from a small number of forum posts, and this one is not strong evidence. It is a single thread. It is included because two separate threads a year apart agree that Google Pay used to work and then stopped, and because the community-maintained compatibility list omits Google Pay entirely — but a report from someone on a current build would be far more useful than this entry.
+This is the weakest-sourced entry on the board and it should be treated that way. Its verdict rests on a single forum post in which Google Pay is mentioned in passing alongside four other apps — no app version, no build, no logs. A claim from that same post about PhonePe has since been withdrawn.
 
-If you are in India and you use UPI, your report is worth more here than anywhere else on the board.
+The community-maintained compatibility list, which covers several hundred banking apps, does not list Google Pay at all. That is not evidence either way; it means nobody has filed a report there.
+
+If you are in India and you use UPI, your report is worth more here than anywhere else on the board — and this entry is the one that most needs it.

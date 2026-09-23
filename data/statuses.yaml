@@ -44,6 +44,10 @@ blocked_reason:
     label: Custom firmware detection
     tone: bad
     summary: The app checks the operating system itself rather than calling an attestation API, and refuses to run. Locking the bootloader does not satisfy this kind of check.
+  - value: exploit-protection
+    label: Exploit protection
+    tone: warn
+    summary: One of GrapheneOS's own hardening features is what the app trips over, not an attestation check. Usually fixed per app under Settings → Apps → the app → Exploit protection, by allowing Native code debugging or Dynamic code loading, or by disabling secure app spawning system-wide. The last of those costs real security, so read what it does before turning it off.
   - value: hardware-attestation
     label: Hardware attestation
     tone: bad

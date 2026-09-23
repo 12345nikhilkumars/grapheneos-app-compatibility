@@ -213,6 +213,8 @@ Four mechanisms, layered. They cover different failure modes.
 
 **No bare status anywhere.** Every verdict shows status, report count, last-verified date and tier. A status without provenance is a claim, not information.
 
+**External community datasets are a source, not an authority.** Most banking entries draw on the PrivSec.dev compatibility tracker, which GrapheneOS points readers to and disclaims in the same breath. Its listings carry no per-app test date, so a listing is cited in prose and never converted into a dated report — doing so would invent a date and let a summary outrank a specific observation. Its report threads are dated and are used as reports. Where a listing and a dated report disagree, the report wins and the disagreement is recorded.
+
 ## CI
 
 | Workflow | Trigger | Does |

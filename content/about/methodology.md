@@ -38,11 +38,29 @@ Only set when the reporter actually knows. A wrong reason is worse than an hones
 | Play Integrity | The app calls the Play Integrity API and fails the device or strong integrity verdict. Locking the bootloader does not help. |
 | SafetyNet | The older attestation API. Same failure, older mechanism. |
 | Custom firmware detection | The app inspects the OS itself and refuses to run, without naming an API. |
+| Exploit protection | One of GrapheneOS's own hardening features is what the app trips over, not an attestation check. Usually fixed per app under Settings → Apps → the app → Exploit protection. |
 | Hardware attestation | Fails a hardware-backed key attestation against Google's servers. |
 | DRM | Protected content is capped at low resolution. Usually a provisioning problem rather than L1 being unavailable — GrapheneOS supports Widevine L1 on Pixels. |
 | Play Services required | Will not run without Google Play Services. |
 | Push delivery | Notifications arrive late or never. Usually battery optimisation suspending sandboxed Play Services. |
 | Carrier provisioning | The carrier has not provisioned the device. Usually VoLTE, VoWiFi or eSIM. |
+
+## Exploit protection, and what the workarounds cost
+
+Some apps fail on GrapheneOS not because they reject the operating system but because one of its own hardening features breaks them. That is a different problem with a different answer, so it has its own reason code. It also has a price, and this site will not tell you to pay it without saying what it is.
+
+| Setting | Where | What it costs |
+|---|---|---|
+| **Native code debugging** | Settings → Apps → the app → Exploit protection | Little. Some anti-tamper SDKs debug their own code and fail unless this is allowed. |
+| **Dynamic code loading** | Same screen | Little, and it is the most useful toggle on the board — it resolves the "unsecured device" error in several Indian banking apps. |
+| **Exploit protection compatibility mode** | Same screen | Real. GrapheneOS's own warning: the app crashed because a memory corruption bug was detected, and that bug may be exploitable by an attacker. |
+| **Secure app spawning** (device-wide) | Settings → Security & privacy → Exploit protection | Serious. See below. |
+
+Disabling **secure app spawning** is the one to think about. It reverts app spawning to the traditional Zygote model, so every app process shares the same random secrets — for address-space layout, stack protection, memory tagging, pointer authentication and heap randomisation. It applies across every profile on the device, which means an app running in one profile can observe the values used by an app in another. That is a device-wide reduction in exploit mitigations, taken on to satisfy one app.
+
+Try the per-app toggles first. They are cheap, they are reversible, and they resolve more of these cases than the device-wide one does.
+
+**Clear the app's storage between attempts.** A banking app that has decided your device is unacceptable tends to keep that decision, so a toggle change will look like it did nothing.
 
 ## Fixability
 
@@ -80,6 +98,12 @@ A status belongs to an app in a country. It does not belong to the country.
 A country page therefore carries counts, not a verdict: how many apps it tracks, how many anyone has reported on, and how many are broken, unavailable or degraded. Working apps get no badge — they are the baseline, and a badge saying so is noise. A country nobody has tested says so, rather than showing a working status by default.
 
 The same applies to a service type. "Payments and UPI: 4 broken of 5" is a fact. "Payments and UPI is broken" would not be, and neither would "Payments and UPI works".
+
+## Where the reports come from
+
+Most entries here rest on the GrapheneOS discussion forum and on the community compatibility tracker maintained by PrivSec.dev, which is the dataset the GrapheneOS project itself points readers to for banking apps. It covers several hundred apps and links each one to a report thread.
+
+Two things are worth knowing when you read an entry that cites it. It is crowd-sourced, and GrapheneOS explicitly makes no guarantee about its validity. And being *listed* is not the same as having been tested recently — the list records apps verified as compatible at some point, and delists them by striking them through. Where a listing and a dated report disagree, this board follows the dated report and records the disagreement rather than resolving it silently.
 
 ## Staleness
 
