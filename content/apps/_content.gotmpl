@@ -24,6 +24,7 @@
     "countryName" $country.name
     "region" $country.region
     "total" $country.total
+    "reported" $country.reported
     "types" $country.types
   }}
   {{ $.AddPage (dict
@@ -44,8 +45,8 @@
       "serviceTypeLabel" $type.label
       "note" $type.note
       "total" $type.total
+      "reported" $type.reported
       "counts" $type.counts
-      "worst" $type.worst
       "apps" $type.apps
     }}
     {{ $.AddPage (dict

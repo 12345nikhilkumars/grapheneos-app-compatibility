@@ -174,17 +174,28 @@ def main() -> int:
                     "label": service_type["label"],
                     "note": service_type.get("note"),
                     "total": len(rows),
+                    # How many of these anyone has actually reported on. The
+                    # difference between "11 apps" and "11 apps, 2 tested" is the
+                    # difference between coverage and the appearance of it.
+                    "reported": sum(1 for row in rows if row["reported"]),
                     "counts": counts,
-                    "worst": min(
-                        (row["verdict"] for row in rows),
-                        key=lambda value: RESULT_SEVERITY.get(value, 99),
-                    ),
                     "apps": rows,
                 }
             )
 
         if not types_out:
             continue
+
+        # Country totals are counts, not a verdict. A country is a container, not
+        # something that can work or break — a single failing app must not be
+        # rendered as "this country is broken". Nor may an untested country be
+        # rendered as working, which is what a worst-of badge defaulting to
+        # "works" did for every country with no reports at all. There is
+        # deliberately no "worst" key here for a template to reach for.
+        country_counts: dict[str, int] = {}
+        for item in types_out:
+            for value, n in item["counts"].items():
+                country_counts[value] = country_counts.get(value, 0) + n
 
         countries_out.append(
             {
@@ -194,6 +205,8 @@ def main() -> int:
                 "order": info["order"],
                 "priority": bool(info.get("priority")),
                 "total": sum(item["total"] for item in types_out),
+                "reported": sum(item["reported"] for item in types_out),
+                "counts": country_counts,
                 "types": types_out,
             }
         )

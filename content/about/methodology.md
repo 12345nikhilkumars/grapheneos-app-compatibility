@@ -73,6 +73,14 @@ Verdicts are computed at build time from the reports. They are never written by 
 - **Dissent is counted, not hidden.** If recent reports disagree with the verdict, that is displayed rather than smoothed away.
 - **Last verified is the newest report date**, and it is always shown.
 
+## What a country page shows
+
+A status belongs to an app in a country. It does not belong to the country.
+
+A country page therefore carries counts, not a verdict: how many apps it tracks, how many anyone has reported on, and how many are broken, unavailable or degraded. Working apps get no badge — they are the baseline, and a badge saying so is noise. A country nobody has tested says so, rather than showing a working status by default.
+
+The same applies to a service type. "Payments and UPI: 4 broken of 5" is a fact. "Payments and UPI is broken" would not be, and neither would "Payments and UPI works".
+
 ## Staleness
 
 An entry whose newest report is more than 180 days old is marked as possibly out of date. A monthly job collects them into one issue.

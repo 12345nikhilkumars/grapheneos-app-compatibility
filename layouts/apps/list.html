@@ -18,7 +18,15 @@
         <li class="country-card{{ if .priority }} country-card--priority{{ end }}">
           <a href="{{ printf "/apps/%s/" (lower .code) | relURL }}">
             <span class="country-card__name">{{ .name }}</span>
-            <span class="country-card__meta">{{ .total }} app{{ if ne (int .total) 1 }}s{{ end }} tracked</span>
+            <span class="country-card__meta">
+              {{ .total }} app{{ if ne (int .total) 1 }}s{{ end }} tracked
+              {{ if gt (int .reported) 0 }}
+                · {{ .reported }} with reports
+              {{ else }}
+                · <span class="provenance__none">no reports yet</span>
+              {{ end }}
+            </span>
+            <span class="country-card__flags">{{ partial "problem-counts.html" (dict "counts" .counts) }}</span>
           </a>
         </li>
       {{ end }}

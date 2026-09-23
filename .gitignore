@@ -13,3 +13,6 @@ __pycache__/
 
 # macOS
 .DS_Store
+
+# Assistant workspace data, not part of the site
+.workbuddy-ai/

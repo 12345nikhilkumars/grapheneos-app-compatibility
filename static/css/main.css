@@ -400,7 +400,8 @@ h3 { font-size: 1.05rem; margin: 1.5rem 0 0.4rem; }
 }
 .country-card__name { display: block; font-weight: 600; }
 .country-card__meta { display: block; font-size: 0.82rem; color: var(--muted); margin-top: 0.15rem; }
-.country-card__worst { display: block; margin-top: 0.5rem; }
+.country-card__flags { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.5rem; }
+.country-card__flags:empty { display: none; }
 
 .link-list { padding-left: 1.1rem; }
 

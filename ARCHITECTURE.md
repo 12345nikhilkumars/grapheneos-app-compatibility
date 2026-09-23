@@ -89,8 +89,13 @@ Most arrivals never see the home page. They come from a search for "does HDFC wo
 | Theming | An inline script in `<head>` applies `data-theme` before first paint, so there is no flash. CSS keys off `:root[data-theme="dark"]`, with a `prefers-color-scheme` block for readers without JavaScript. |
 | Result links | Arrow keys move real focus between real links. No `aria-activedescendant` simulation. |
 | Without JavaScript | Everything structural still works. Search and the theme toggle are the only losses, and the system colour scheme is still honoured. |
+| Verdicts and counts | A verdict belongs to an app in a country. A country or a service type is a container and carries counts, never a verdict. |
 
 The theme's dark token block is written twice — once for the explicit attribute, once behind the media query. The duplication is deliberate: `light-dark()` would express it once, but a browser without support would render an unstyled page rather than the light theme.
+
+A country is not something that can work or break, and neither is a service type. Containers therefore state how many apps they hold, how many anyone has reported on, and — only when non-zero — how many are broken, unavailable or degraded. Working apps are the baseline and get no badge. A container nobody has tested says so, rather than defaulting to a working status. The rule lives in `layouts/partials/problem-counts.html` so the home page, the app index and the country pages cannot drift apart.
+
+The derived data carries no `worst` key at container level, so no template can reintroduce a container verdict by accident.
 
 ## Pipeline
 
@@ -195,6 +200,7 @@ Never authored — an authored verdict drifts away from the reports it claims to
 | `last_verified` | Newest report date. |
 | `stale` | `last_verified` older than `params.staleAfterDays`. |
 | `tier` | Highest tier among agreeing reports. `imported` ranks lowest. |
+| `counts(container)` | Tally of verdicts across a country or service type. No `worst`, deliberately. |
 
 ## Trust model
 

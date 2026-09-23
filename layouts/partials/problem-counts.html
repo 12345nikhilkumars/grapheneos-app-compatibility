@@ -1,0 +1,26 @@
+{{/* Count badges for the non-working verdicts in a container.
+
+     Expects a dict: (dict "counts" $counts)
+
+     A container — a country, a service type — is a category, not a thing that
+     can work or break, so it never carries a verdict of its own. Only the
+     problems are worth flagging: "works" is the baseline and needs no badge to
+     say so, and an untested container must not be rendered as working. What is
+     left is a tally of apps known to be broken, unavailable or degraded.
+
+     Lives here rather than in each template because the same rule is applied on
+     the home page, the app index and the country pages, and a rule stated three
+     times drifts. */}}
+{{- $counts := .counts -}}
+{{- $meta := dict -}}
+{{- range index hugo.Data.statuses "result" -}}
+  {{- $meta = merge $meta (dict .value (dict "label" .label "tone" (.tone | default "muted"))) -}}
+{{- end -}}
+{{- range slice "broken" "unavailable" "works-degraded" -}}
+  {{- $n := index $counts . -}}
+  {{- if $n -}}
+    {{- with index $meta . -}}
+      {{- printf `<span class="badge badge--%s">%d %s</span>` .tone (int $n) .label | safeHTML -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}

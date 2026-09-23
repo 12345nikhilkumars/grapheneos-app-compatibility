@@ -18,27 +18,34 @@
     <h1>GrapheneOS in {{ .Params.countryName }}</h1>
     <p class="page-head__lede">
       {{ .Params.total }} app{{ if ne .Params.total 1 }}s{{ end }} tracked across
-      {{ len .Params.types }} service type{{ if ne (len .Params.types) 1 }}s{{ end }}.
+      {{ len .Params.types }} service type{{ if ne (len .Params.types) 1 }}s{{ end }}{{ if gt (int .Params.reported) 0 }},
+      {{ .Params.reported }} with at least one report{{ else }}, none of them reported on yet{{ end }}.
       A status only reflects reports from this country — an app working elsewhere may still fail here.
     </p>
   </header>
 
+  {{/* Problems only, and as counts. See partials/problem-counts.html for why.
+       Coverage is stated separately so the reader can tell "4 broken out of 9
+       tested" from "4 broken out of 11, 2 untested". */}}
   <ul class="type-list">
     {{ range .Params.types }}
+      {{ $type := . }}
       <li class="type-row">
-        <a class="type-row__link" href="{{ printf "/apps/%s/%s/" (lower $country) .slug | relURL }}">
+        <a class="type-row__link" href="{{ printf "/apps/%s/%s/" (lower $country) $type.slug | relURL }}">
           <span class="type-row__head">
-            <span class="type-row__label">{{ .label }}</span>
-            {{ partial "badge.html" (dict "kind" "result" "value" .worst) }}
+            <span class="type-row__label">{{ $type.label }}</span>
           </span>
           <span class="type-row__counts">
-            {{ .total }} app{{ if ne .total 1 }}s{{ end }}
-            {{ range $value, $n := .counts }}
-              · {{ $n }} {{ $value }}
+            {{ $type.total }} app{{ if ne (int $type.total) 1 }}s{{ end }}
+            {{ if eq (int $type.reported) 0 }}
+              · <span class="provenance__none">no reports yet</span>
+            {{ else }}
+              · {{ $type.reported }} with reports
+              {{ partial "problem-counts.html" (dict "counts" $type.counts) }}
             {{ end }}
           </span>
         </a>
-        <p class="type-row__note">{{ .note }}</p>
+        <p class="type-row__note">{{ $type.note }}</p>
       </li>
     {{ end }}
   </ul>
