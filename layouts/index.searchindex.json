@@ -1,0 +1,3 @@
+{{/* Emitted at /search-index.json. The work is in partials/search-index.html so
+     this template contributes no whitespace to the file. */}}
+{{- partial "search-index.html" . | jsonify -}}

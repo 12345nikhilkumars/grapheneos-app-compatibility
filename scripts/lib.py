@@ -52,7 +52,9 @@ RESULT_SEVERITY = {
     "unknown": 5,
 }
 
-TIER_RANK = {"maintainer": 3, "trusted": 2, "community": 1}
+# How much weight a report carries when several agree. An imported report is
+# somebody else's public post, so it never outranks a first-hand account.
+TIER_RANK = {"maintainer": 3, "trusted": 2, "community": 1, "imported": 0}
 
 
 class EntryError(Exception):

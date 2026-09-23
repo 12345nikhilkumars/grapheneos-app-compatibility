@@ -10,32 +10,52 @@ links:
   homepage: https://wallet.google
   play_store: https://play.google.com/store/apps/details?id=com.google.android.apps.walletnfcrel
   fdroid: null
+alternatives:
+  - kind: app
+    label: A bank app with its own NFC stack
+    covers: full
+    detail: "Some banks handle contactless payment inside their own app instead of routing it through Google Wallet. Crédit Mutuel and CIC in France do this, and it works with no Play Services installed at all."
+    url: null
+  - kind: app
+    label: Curve Pay
+    covers: partial
+    detail: "Curve issues a virtual card and performs contactless payment itself through host card emulation. Once it is activated, set it as the default wallet under Settings, Connected devices, Connection preferences, NFC, Contactless payments."
+    limitation: "Activation does not succeed for everyone, and the setup is fussy: Play Services must be installed with at least network permission, and a custom DNS server must not be blocking anything during first setup. Once it works it tends to keep working."
+    url: https://www.curve.com/
+  - kind: hardware
+    label: A watch, or a physical card
+    covers: full
+    detail: "Wear OS and Garmin watches perform their own attestation independently of the phone, so tap-to-pay works from the wrist even when it fails on the phone."
+    url: null
 reports:
-  - date: 2026-08-20
-    build: "2026081300"
-    device: pixel-8
-    profile: owner
-    country: US
+  - date: 2026-07-09
+    build: null
+    device: pixel-10-pro-xl
+    profile: null
+    country: FR
     play: sandboxed
     result: broken
-    blocked_reason: hardware-attestation
+    blocked_reason: play-integrity
     fixability: possible-via-workaround
-    workaround: "Use a Wear OS or Garmin watch for tap-to-pay, or an NFC payment sticker such as Curve or Tapster."
-    tier: community
-    reporter: "@grapheneos-forum"
-    source: "https://github.com/GrapheneOS/os-issue-tracker/issues/1506"
+    workaround: "Use a bank app with its own NFC stack, Curve Pay, or a watch. Google Wallet itself cannot be made to work — the check is enforced on Google's side."
+    tier: imported
+    source: "https://discuss.grapheneos.org/d/38083-nfc"
 ---
 
 The Wallet app installs and runs normally. You can add cards, and stored passes, tickets and loyalty cards all display correctly.
 
-What does not work is **tap-to-pay**. Holding the phone to a payment terminal fails, with a message saying the device does not meet security requirements. There is no setting that changes this.
+What does not work is **tap-to-pay**. Holding the phone to a terminal fails with a message saying the device does not meet contactless payment security requirements. No setting changes this.
 
-This is the single most commonly reported thing that simply does not work on GrapheneOS, and it is worth knowing before you switch rather than after.
+This is the most commonly reported thing that simply does not work on GrapheneOS, and it is worth knowing before you switch rather than after.
+
+**The important correction to make here:** tap-to-pay being broken in Google Wallet does not mean contactless payment is impossible on GrapheneOS. It means *Google's* wallet is unavailable. Several other routes work, and they are listed above. Earlier versions of this entry said a workaround was to buy an NFC payment sticker; nobody has reported doing that, and it should not have been here.
 
 ## Technical detail
 
-Tap-to-pay requires a hardware-backed attestation that the device is running an unmodified, Google-approved operating system. GrapheneOS cannot produce that attestation, and the check is enforced on Google's side rather than in the app, so there is nothing to patch locally. Locking the bootloader does not help — the attestation fails regardless.
+Tap-to-pay requires the app to pass a Play Integrity check that the device is running an unmodified, Google-approved operating system. GrapheneOS cannot pass it, and the decision is made on Google's servers rather than inside the app, so there is nothing to patch locally. Locking the bootloader does not help — the check fails either way.
 
-Card storage and pass display do not require attestation, which is why they continue to work.
+Card storage and pass display do not require the check, which is why they keep working.
 
-A watch is the usual workaround because Wear OS devices perform their own attestation, independent of the phone.
+The alternatives work for a different reason in each case. A bank app with its own NFC stack never asks Google anything, so it is unaffected. Curve performs host card emulation itself and is not gated on attestation, though its activation step is unreliable. A watch attests on its own hardware, so the phone's verdict is irrelevant.
+
+If you rely on tap-to-pay, the thing to check before switching is whether your own bank has a native NFC option. That is a question for the bank, not for GrapheneOS.

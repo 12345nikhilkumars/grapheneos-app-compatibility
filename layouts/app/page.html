@@ -27,6 +27,10 @@
 {{ $worstName := $worstCode }}
 {{ range where hugo.Data.countries "code" $worstCode }}{{ $worstName = .name }}{{ end }}
 
+{{ $row := index $app.by_country $worstCode }}
+{{ $alts := $app.alternatives }}
+{{ $works := eq $worst "works" }}
+
 <nav class="crumbs" aria-label="Breadcrumb">
   <a href="{{ "/apps/" | relURL }}">Apps</a>
   {{ with $worstCode }}
@@ -53,7 +57,7 @@
         {{ with $worstCode }}<span class="verdict__where">in {{ $worstName }}</span>{{ end }}
       </span>
     </div>
-    {{ with index $app.by_country $worstCode }}
+    {{ with $row }}
       <div class="verdict__row">
         <span class="verdict__label">Can it be fixed</span>
         <span class="verdict__value">{{ partial "badge.html" (dict "kind" "fixability" "value" .fixability) }}</span>
@@ -71,22 +75,62 @@
   {{/* Layer 2 — plain language. */}}
   <div class="prose app__body">{{ .Content }}</div>
 
-  {{/* Layer 3 — what to do. */}}
-  {{ with index $app.by_country $worstCode }}
-    {{ if .latest }}
-      <section class="callout{{ if eq .fixability "not-possible" }} callout--bad{{ else if eq .fixability "not-applicable" }} callout--good{{ else }} callout--warn{{ end }}">
-        <h2>What to do</h2>
-        {{ if .latest.workaround }}
-          <p>{{ .latest.workaround }}</p>
-        {{ else if eq .fixability "not-possible" }}
-          <p>There is no known workaround, and none looks likely. Plan around this app rather than for it.</p>
-        {{ else if eq .fixability "not-applicable" }}
-          <p>Nothing. The app works as it should.</p>
-        {{ else }}
-          <p>Nobody has established a workaround yet. That is not the same as proving none exists.</p>
+  {{/* Layer 3 — what to do, and what to do instead. Rendered whenever there is
+       either a workaround or a listed alternative, so an app with no reports
+       but a known fallback still tells the reader something useful. */}}
+  {{ if or $alts (and $row $row.latest) }}
+    <section class="callout{{ if $works }} callout--good{{ else if eq $row.fixability "not-possible" }} callout--bad{{ else if eq $row.fixability "not-applicable" }} callout--good{{ else }} callout--warn{{ end }}">
+      <h2>{{ if $works }}Other ways to do this{{ else }}What to do{{ end }}</h2>
+
+      {{ with $row }}
+        {{ if .latest }}
+          {{ if .latest.workaround }}
+            <p>{{ .latest.workaround }}</p>
+          {{ else if eq .fixability "not-possible" }}
+            <p>There is no known workaround, and none looks likely. Plan around this app rather than for it.</p>
+          {{ else if eq .fixability "not-applicable" }}
+            {{ if not $alts }}<p>Nothing. The app works as it should.</p>{{ end }}
+          {{ else }}
+            <p>Nobody has established a workaround yet. That is not the same as proving none exists.</p>
+          {{ end }}
         {{ end }}
-      </section>
-    {{ end }}
+      {{ end }}
+
+      {{ if and $alts $works }}
+        <p>The app works. If it stops working, or you would rather not install it, these cover the same ground.</p>
+      {{ end }}
+
+      {{ with $alts }}
+        <ul class="alternatives">
+          {{ range . }}
+            {{ $alt := . }}
+            {{ $kindLabel := $alt.kind }}
+            {{ range index hugo.Data.statuses "alternative_kind" }}
+              {{ if eq .value $alt.kind }}{{ $kindLabel = .label }}{{ end }}
+            {{ end }}
+            {{ $coversLabel := $alt.covers }}
+            {{ $coversTone := "muted" }}
+            {{ range index hugo.Data.statuses "alternative_covers" }}
+              {{ if eq .value $alt.covers }}
+                {{ $coversLabel = .label }}
+                {{ $coversTone = .tone | default "muted" }}
+              {{ end }}
+            {{ end }}
+            <li>
+              <span class="alternatives__kind">{{ $kindLabel }}</span>
+              <span class="alternatives__body">
+                {{ if $alt.url }}<a href="{{ $alt.url }}" rel="nofollow noopener">{{ $alt.label }}</a>{{ else }}<strong>{{ $alt.label }}</strong>{{ end }}
+                <span class="badge badge--{{ $coversTone }}">{{ $coversLabel }}</span>
+                <span class="alternatives__detail">{{ $alt.detail }}</span>
+                {{ with $alt.limitation }}
+                  <span class="alternatives__limit">{{ . }}</span>
+                {{ end }}
+              </span>
+            </li>
+          {{ end }}
+        </ul>
+      {{ end }}
+    </section>
   {{ end }}
 
   {{/* Layer 4 — by country. */}}
@@ -123,6 +167,9 @@
   {{ end }}
 
   {{/* Layer 5 — evidence, collapsed. */}}
+  {{ $imported := false }}
+  {{ range $app.reports }}{{ if eq .tier "imported" }}{{ $imported = true }}{{ end }}{{ end }}
+
   <details class="disclosure">
     <summary>Technical detail — {{ len $app.reports }} report{{ if ne (len $app.reports) 1 }}s{{ end }}</summary>
     <div class="disclosure__body">
@@ -132,10 +179,10 @@
             <li class="report">
               <div class="report__head">
                 <time datetime="{{ .date }}">{{ .date }}</time>
-                <code>build {{ .build }}</code>
-                <span>{{ .device }}</span>
-                <span>{{ .profile }} profile</span>
-                <span>{{ .play }} Play</span>
+                {{ with .build }}<code>build {{ . }}</code>{{ end }}
+                {{ with .device }}<span>{{ . }}</span>{{ end }}
+                {{ with .profile }}<span>{{ . }} profile</span>{{ end }}
+                {{ with .play }}<span>{{ . }} Play</span>{{ end }}
                 {{ with .carrier }}<span>{{ . }}</span>{{ end }}
               </div>
               <div class="report__result">
@@ -147,9 +194,9 @@
               <div class="report__meta">
                 <span>{{ .country }}</span>
                 <span>{{ partial "badge.html" (dict "kind" "tier" "value" .tier) }}</span>
-                <span>{{ .reporter }}</span>
+                {{ with .reporter }}<span>{{ . }}</span>{{ end }}
                 {{ with .source }}
-                  <a href="{{ . }}" rel="nofollow noopener">imported from source</a>
+                  <a href="{{ . }}" rel="nofollow noopener">view source</a>
                 {{ end }}
               </div>
             </li>
@@ -159,10 +206,14 @@
         <p>No reports have been submitted for this app.</p>
       {{ end }}
 
-      <p class="disclosure__note">
-        Imported reports were taken from a public source rather than tested by a
-        contributor to this project. They have not been reproduced.
-      </p>
+      {{ if $imported }}
+        <p class="disclosure__note">
+          Reports marked <strong>Imported, not reproduced</strong> were taken from a
+          public source rather than tested by a contributor to this project. Nobody
+          here has reproduced them. Where the source did not state a build, device or
+          profile, that field is left empty rather than guessed at.
+        </p>
+      {{ end }}
     </div>
   </details>
 

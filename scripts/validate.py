@@ -62,39 +62,42 @@ def check_enum_drift(report: Report, schema: dict) -> None:
     """The schema duplicates the enum lists in data/. Assert they agree.
 
     Duplication is unavoidable — JSON Schema cannot read YAML — so it is turned
-    into a checked invariant instead of a silent trap.
+    into a checked invariant instead of a silent trap. Adding a value to
+    statuses.yaml and forgetting the schema (or the reverse) fails the build.
     """
     reference = lib.load_reference()
     props = schema["properties"]
+    report_def = schema["$defs"]["report"]["properties"]
+    alt_def = schema["$defs"]["alternative"]["properties"]
 
-    expected = {
-        "service_type": sorted(reference.service_types),
-        "result": sorted(row["value"] for row in reference.statuses["result"]),
-        "blocked_reason": sorted(row["value"] for row in reference.statuses["blocked_reason"]),
-        "fixability": sorted(row["value"] for row in reference.statuses["fixability"]),
-        "tier": sorted(row["value"] for row in reference.statuses["tier"]),
-    }
-    actual = {
-        "service_type": sorted(props["service_type"]["enum"]),
-        "result": sorted(schema["$defs"]["report"]["properties"]["result"]["enum"]),
-        "blocked_reason": sorted(schema["$defs"]["report"]["properties"]["blocked_reason"]["enum"]),
-        "fixability": sorted(schema["$defs"]["report"]["properties"]["fixability"]["enum"]),
-        "tier": sorted(schema["$defs"]["report"]["properties"]["tier"]["enum"]),
-    }
+    pairs = [
+        ("service_type", reference.service_types, props["service_type"]["enum"]),
+        ("result", reference.statuses["result"], report_def["result"]["enum"]),
+        ("blocked_reason", reference.statuses["blocked_reason"], report_def["blocked_reason"]["enum"]),
+        ("fixability", reference.statuses["fixability"], report_def["fixability"]["enum"]),
+        ("tier", reference.statuses["tier"], report_def["tier"]["enum"]),
+        ("alternative_kind", reference.statuses["alternative_kind"], alt_def["kind"]["enum"]),
+        ("alternative_covers", reference.statuses["alternative_covers"], alt_def["covers"]["enum"]),
+    ]
 
-    for field, values in expected.items():
-        if actual[field] != values:
-            only_schema = set(actual[field]) - set(values)
-            only_yaml = set(values) - set(actual[field])
-            detail = []
-            if only_schema:
-                detail.append(f"only in schema: {sorted(only_schema)}")
-            if only_yaml:
-                detail.append(f"only in data/: {sorted(only_yaml)}")
-            report.error(
-                lib.SCHEMA_PATH,
-                f"enum for {field} has drifted from data/: {'; '.join(detail)}",
-            )
+    for field, source, schema_enum in pairs:
+        # service_types is keyed by slug; the status files are lists of rows.
+        expected = sorted(source) if isinstance(source, dict) else sorted(row["value"] for row in source)
+        actual = sorted(schema_enum)
+        if actual == expected:
+            continue
+
+        detail = []
+        only_schema = set(actual) - set(expected)
+        only_yaml = set(expected) - set(actual)
+        if only_schema:
+            detail.append(f"only in schema: {sorted(only_schema)}")
+        if only_yaml:
+            detail.append(f"only in data/: {sorted(only_yaml)}")
+        report.error(
+            lib.SCHEMA_PATH,
+            f"enum for {field} has drifted from data/: {'; '.join(detail)}",
+        )
 
 
 def check_build(report: Report, entry, index: int, build, reference, today: date) -> None:
@@ -170,6 +173,7 @@ def check_entry(report: Report, entry, validator, reference, today: date) -> Non
         )
 
     reports = meta.get("reports") or []
+    alternatives = meta.get("alternatives") or []
 
     # Reports must be newest first, so the top of the file is always current.
     dates = [r.get("date") for r in reports if isinstance(r, dict)]
@@ -233,7 +237,9 @@ def check_entry(report: Report, entry, validator, reference, today: date) -> Non
             )
 
         # A blocker recorded against a working result is a contradiction.
-        if item.get("result") in {"works", "works-with-setup"} and item.get("blocked_reason") not in {
+        # 'works-with-setup' is excluded on purpose: it means the app runs but
+        # only after working around something, so a blocker is expected there.
+        if item.get("result") == "works" and item.get("blocked_reason") not in {
             "none",
             None,
         }:
@@ -241,6 +247,81 @@ def check_entry(report: Report, entry, validator, reference, today: date) -> Non
                 entry.path,
                 f"report {index}: result is '{item['result']}' but blocked_reason is "
                 f"'{item['blocked_reason']}'. Usually 'none' is meant.",
+                line,
+            )
+
+        # The mirror image: nothing to fix, but the app does not work.
+        if item.get("result") in {"broken", "unavailable"} and item.get("fixability") == "not-applicable":
+            report.warn(
+                entry.path,
+                f"report {index}: result is '{item['result']}' but fixability is "
+                "'not-applicable'. 'not-applicable' means the app works.",
+                line,
+            )
+
+        # A working app with something to fix is almost always a mis-set field.
+        if item.get("result") == "works" and item.get("fixability") not in {"not-applicable", None}:
+            report.warn(
+                entry.path,
+                f"report {index}: result is 'works' but fixability is "
+                f"'{item['fixability']}'. If it works unaided, use 'not-applicable'.",
+                line,
+            )
+
+        # Claiming no blocker while reporting a failure loses the most useful
+        # field on the entry.
+        if item.get("result") in {"broken", "unavailable"} and item.get("blocked_reason") == "none":
+            report.warn(
+                entry.path,
+                f"report {index}: result is '{item['result']}' but blocked_reason is "
+                "'none'. Use 'unknown' if the cause is not established.",
+                line,
+            )
+
+    check_alternatives(report, entry, alternatives)
+
+
+def check_alternatives(report: Report, entry, alternatives: list) -> None:
+    """An app the reader cannot use needs somewhere to go.
+
+    The point of the board is not only to say what is broken but to say what to
+    do instead. A verdict of 'not-possible' or 'use an alternative' with nothing
+    listed under alternatives leaves the reader exactly where they started.
+    """
+    if alternatives:
+        seen = set()
+        for index, item in enumerate(alternatives):
+            if not isinstance(item, dict):
+                continue
+            label = item.get("label")
+            if label and label.lower() in seen:
+                report.warn(
+                    entry.path,
+                    f"alternative {index}: '{label}' is listed more than once",
+                    entry.key_lines.get("alternatives"),
+                )
+            if label:
+                seen.add(label.lower())
+        return
+
+    line = entry.key_lines.get("reports")
+    for index, item in enumerate(entry.meta.get("reports") or []):
+        if not isinstance(item, dict):
+            continue
+        fixability = item.get("fixability")
+        if fixability == "possible-via-workaround":
+            report.warn(
+                entry.path,
+                f"report {index}: fixability is 'possible-via-workaround' but nothing is "
+                "listed under alternatives. Name the alternative so the reader can act on it.",
+                line,
+            )
+        elif fixability == "not-possible":
+            report.warn(
+                entry.path,
+                f"report {index}: fixability is 'not-possible' but nothing is listed under "
+                "alternatives. Even an unfixable app usually has a fallback — a website, "
+                "another app, or a physical card.",
                 line,
             )
 

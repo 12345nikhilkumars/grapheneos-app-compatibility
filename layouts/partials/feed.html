@@ -1,0 +1,15 @@
+{{/* The full machine-readable dump of derived data.
+     
+     Emitted at /apps/index.json. Same data the pages are built from, so anything
+     consuming this sees exactly what a reader sees. In a partial for the same
+     reason as the search index: so no template whitespace lands in the file. */}}
+
+{{ $derived := partialCached "derived.html" . }}
+
+{{ return (dict
+  "generated" $derived.generated
+  "stale_after_days" $derived.stale_after_days
+  "summary" $derived.summary
+  "countries" $derived.countries
+  "apps" $derived.apps
+) }}

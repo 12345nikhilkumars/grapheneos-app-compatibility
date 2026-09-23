@@ -75,6 +75,11 @@
         "fdroid": { "type": ["string", "null"], "format": "uri" }
       }
     },
+    "alternatives": {
+      "type": "array",
+      "description": "Other ways to do this app's job when the app cannot. Applies to the app as a whole rather than to one report, because what an alternative covers does not change with the OS build. A bank's website exists whether or not the app installs.",
+      "items": { "$ref": "#/$defs/alternative" }
+    },
     "reports": {
       "type": "array",
       "description": "Newest first. validate.py fails the build if the order is wrong. An empty list is valid and means nobody has reported testing this app yet.",
@@ -82,40 +87,92 @@
     }
   },
   "$defs": {
+    "alternative": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "label", "covers", "detail"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["browser", "app", "hardware", "phone", "in-person", "other"],
+          "description": "Must match a value in data/statuses.yaml under alternative_kind."
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Short name, shown as the link or heading."
+        },
+        "covers": {
+          "type": "string",
+          "enum": ["full", "partial"],
+          "description": "Whether the alternative replaces the app completely. Partial is the common case and the honest one: a bank website restores account access but not UPI."
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1,
+          "description": "What it does, in plain language."
+        },
+        "limitation": {
+          "type": ["string", "null"],
+          "description": "What the alternative does not do. Required when covers is partial."
+        },
+        "url": {
+          "type": ["string", "null"],
+          "format": "uri"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "covers": { "const": "partial" } },
+            "required": ["covers"]
+          },
+          "then": {
+            "required": ["limitation"],
+            "properties": {
+              "limitation": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      ]
+    },
     "report": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "date",
-        "build",
-        "device",
-        "profile",
-        "country",
-        "play",
-        "result",
-        "blocked_reason",
-        "fixability",
-        "tier",
-        "reporter"
+      "required": ["date", "country", "result", "blocked_reason", "fixability", "tier"],
+      "description": "Fields a genuine contribution must supply are required only for non-imported tiers. An imported report is a summary of somebody else's public post, and forcing it to name a device, a profile and a build the original author never stated would mean inventing them. The if/then below enforces the split: imported reports must cite a source, everything else must be first-hand.",
+      "allOf": [
+        {
+          "if": {
+            "properties": { "tier": { "const": "imported" } },
+            "required": ["tier"]
+          },
+          "then": {
+            "required": ["source"]
+          },
+          "else": {
+            "required": ["reporter", "build", "device", "profile", "play"]
+          }
+        }
       ],
       "properties": {
         "date": {
           "type": "string",
           "format": "date",
-          "description": "The day the test was run. Not the day the file was edited."
+          "description": "The day the test was run. Not the day the file was edited. For an imported report, the date of the source."
         },
         "build": {
-          "type": "string",
+          "type": ["string", "null"],
           "pattern": "^[0-9]{10}$",
-          "description": "GrapheneOS build, YYYYMMDDNN."
+          "description": "GrapheneOS build, YYYYMMDDNN. Null where the source did not state one. A guessed build is worse than no build."
         },
         "device": {
-          "type": "string",
-          "description": "Slug from data/devices.yaml."
+          "type": ["string", "null"],
+          "description": "Slug from data/devices.yaml, or null if the source did not say."
         },
         "profile": {
-          "type": "string",
-          "enum": ["owner", "secondary"],
+          "type": ["string", "null"],
+          "enum": ["owner", "secondary", null],
           "description": "Which user profile the app was tested in."
         },
         "country": {
@@ -128,8 +185,8 @@
           "description": "Only set when the failure is carrier-related."
         },
         "play": {
-          "type": "string",
-          "enum": ["sandboxed", "microg", "none"],
+          "type": ["string", "null"],
+          "enum": ["sandboxed", "microg", "none", null],
           "description": "How Play Services were provided, if at all."
         },
         "result": {
@@ -175,16 +232,17 @@
         },
         "tier": {
           "type": "string",
-          "enum": ["maintainer", "trusted", "community"]
+          "enum": ["maintainer", "trusted", "community", "imported"]
         },
         "reporter": {
-          "type": "string",
-          "pattern": "^@?[A-Za-z0-9][A-Za-z0-9_-]*$"
+          "type": ["string", "null"],
+          "pattern": "^@?[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "description": "The person who ran the test. Required for every tier except imported, where the report was not filed by anyone here."
         },
         "source": {
           "type": ["string", "null"],
           "format": "uri",
-          "description": "Public source this report was imported from. Set only on seed data imported by a maintainer. A contributor's own report must never carry this — if it does, it is second-hand and should be rejected."
+          "description": "Public source this report was imported from. Required for tier imported. A contributor's own report must never carry this — if it does, it is second-hand and should be rejected."
         }
       }
     }

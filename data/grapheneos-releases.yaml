@@ -10,8 +10,17 @@
 # listed here produces a warning, not an error — releases ship every few days
 # and this list will always lag. Do not treat it as exhaustive.
 #
+# The list serves two purposes: the recent releases, and older builds that an
+# entry cites as evidence. A build referenced by a report belongs here even if
+# it is years old, otherwise every such report produces a warning and the
+# warnings stop being read.
+#
 # android - the Android version the release is based on
 
+- build: "2023102300"
+  tag_date: 2023-10-23
+  android: "14"
+  note: "Fixed Widevine L1 support on Android 14, which had broken in 2023100900. Cited by the Netflix entry."
 - build: "2026091900"
   tag_date: 2026-09-19
   android: "17"

@@ -5,6 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}</title>
   <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ site.Params.description }}{{ end }}">
+
+  {{/* Runs before the stylesheet so the correct theme is applied at first
+       paint. Without this the page renders light for a moment and then flips,
+       which is worse than not having a theme toggle at all. */}}
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem("theme");
+        if (stored === "light" || stored === "dark") {
+          document.documentElement.setAttribute("data-theme", stored);
+        }
+      } catch (error) {
+        /* Private mode or storage disabled. The media query takes over. */
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="{{ "css/main.css" | relURL }}">
   {{ block "head" . }}{{ end }}
 </head>
@@ -16,11 +33,50 @@
       <span class="brand__mark" aria-hidden="true"></span>
       GrapheneOS Info Board
     </a>
+
+    <div class="site-tools">
+      <form class="search" role="search" data-search
+            data-index="{{ "search-index.json" | relURL }}">
+        <label class="sr-only" for="site-search">Search apps</label>
+        <div class="search__field">
+          <svg class="search__icon" width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <circle cx="7" cy="7" r="4.6" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M10.5 10.5 14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <input class="search__input" id="site-search" type="search" name="q"
+                 placeholder="Search apps" autocomplete="off" spellcheck="false"
+                 aria-expanded="false" aria-controls="search-results">
+          <button class="search__clear" type="button" hidden aria-label="Clear search">&times;</button>
+        </div>
+        <ul class="search__results" id="search-results" hidden></ul>
+        <p class="sr-only" role="status" aria-live="polite" data-search-status></p>
+      </form>
+
+      <button class="theme-toggle" type="button" data-theme-toggle
+              aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="icon-moon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M13.2 9.8A5.6 5.6 0 0 1 6.2 2.8a5.6 5.6 0 1 0 7 7Z" fill="currentColor"/>
+        </svg>
+        <svg class="icon-sun" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="8" cy="8" r="3.1" stroke="currentColor" stroke-width="1.4"/>
+          <g stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+            <path d="M8 1.2v1.6M8 13.2v1.6M1.2 8h1.6M13.2 8h1.6M3.2 3.2l1.1 1.1M11.7 11.7l1.1 1.1M12.8 3.2l-1.1 1.1M4.3 11.7l-1.1 1.1"/>
+          </g>
+        </svg>
+      </button>
+    </div>
+
+    {{ $nav := slice
+      (dict "href" "/apps/" "label" "Apps")
+      (dict "href" "/about/methodology/" "label" "Methodology")
+      (dict "href" "/about/contribute/" "label" "Contribute")
+      (dict "href" "/about/" "label" "About")
+    }}
     <nav class="site-nav" aria-label="Main">
-      <a href="{{ "/apps/" | relURL }}">Apps</a>
-      <a href="{{ "/about/methodology/" | relURL }}">Methodology</a>
-      <a href="{{ "/about/contribute/" | relURL }}">Contribute</a>
-      <a href="{{ "/about/" | relURL }}">About</a>
+      {{ range $nav }}
+        {{ $url := .href | relURL }}
+        <a href="{{ $url }}"{{ if eq $.RelPermalink $url }} aria-current="page"{{ end }}>{{ .label }}</a>
+      {{ end }}
     </nav>
   </header>
 
@@ -34,7 +90,9 @@
       Code <a href="https://www.gnu.org/licenses/agpl-3.0.html">AGPL-3.0-or-later</a>
     </p>
     <p>Not affiliated with the GrapheneOS project. No claims are made about the security of any device.</p>
-    <p><a href="{{ site.Params.repo }}">Contribute on GitHub</a> · <a href="{{ "index.xml" | relURL }}">RSS</a></p>
+    <p><a href="{{ site.Params.repo }}">Contribute on GitHub</a> · <a href="{{ "index.xml" | relURL }}">RSS</a> · <a href="{{ "search-index.json" | relURL }}">Search index (JSON)</a></p>
   </footer>
+
+  <script src="{{ "js/site.js" | relURL }}" defer></script>
 </body>
 </html>

@@ -1,0 +1,100 @@
+{{/* Builds the flat search index.
+     
+     Lives in a partial rather than directly in layouts/index.searchindex.json so
+     the template's whitespace does not end up in the emitted file. A partial
+     that calls return discards everything it printed, which keeps the payload
+     down to the JSON itself — this file is fetched on the reader's first
+     keystroke, so the difference is worth having.
+     
+     Reads data/derived/apps.json, the same source every page reads, so a search
+     result cannot disagree with the page it links to. */}}
+
+{{ $derived := partialCached "derived.html" . }}
+
+{{ $order := slice "broken" "unavailable" "works-degraded" "works-with-setup" "works" "unknown" }}
+
+{{/* Enum labels, so the index carries display text rather than raw values. */}}
+{{ $resultMeta := dict }}
+{{ range index hugo.Data.statuses "result" }}
+  {{ $resultMeta = merge $resultMeta (dict .value (dict "label" .label "tone" (.tone | default "muted"))) }}
+{{ end }}
+{{ $fixMeta := dict }}
+{{ range index hugo.Data.statuses "fixability" }}
+  {{ $fixMeta = merge $fixMeta (dict .value (dict "label" .label "tone" (.tone | default "muted"))) }}
+{{ end }}
+
+{{ $typeLabels := dict }}
+{{ range $derived.service_types }}
+  {{ $typeLabels = merge $typeLabels (dict .slug .label) }}
+{{ end }}
+
+{{ $countryNames := dict }}
+{{ range hugo.Data.countries }}
+  {{ $countryNames = merge $countryNames (dict .code .name) }}
+{{ end }}
+
+{{ $records := slice }}
+
+{{ range $slug, $app := $derived.apps }}
+
+  {{/* The same "worst country" rule the app page uses, so the badge a reader
+       sees in the dropdown matches the badge on the page it opens. Ranging over
+       a map visits keys in sorted order, so the country picked here and the
+       fixability picked below are always the same one. */}}
+  {{ $worst := "unknown" }}
+  {{ $worstRank := 99 }}
+  {{ $fix := "" }}
+  {{ range $code, $row := $app.by_country }}
+    {{ if $row.reported }}
+      {{ $rank := 99 }}
+      {{ range $i, $value := $order }}{{ if eq $value $row.verdict }}{{ $rank = $i }}{{ end }}{{ end }}
+      {{ if lt $rank $worstRank }}
+        {{ $worstRank = $rank }}
+        {{ $worst = $row.verdict }}
+        {{ $fix = $row.fixability }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+
+  {{ $typeLabel := index $typeLabels $app.service_type | default $app.service_type }}
+
+  {{ $badges := slice }}
+  {{ with index $resultMeta $worst }}{{ $badges = $badges | append (dict "label" .label "tone" .tone) }}{{ end }}
+  {{ with index $fixMeta $fix }}{{ $badges = $badges | append (dict "label" .label "tone" .tone) }}{{ end }}
+
+  {{ $subtitle := $typeLabel }}
+  {{ with $app.developer }}{{ $subtitle = printf "%s · %s" . $typeLabel }}{{ end }}
+
+  {{/* Built with explicit guards rather than filtered afterwards, because
+       delimit renders a nil element as the literal string "<no value>". */}}
+  {{ $parts := slice $app.title $app.service_type $typeLabel }}
+  {{ with $app.package }}{{ $parts = $parts | append . }}{{ end }}
+  {{ with $app.developer }}{{ $parts = $parts | append . }}{{ end }}
+  {{ range $app.countries }}{{ with index $countryNames . }}{{ $parts = $parts | append . }}{{ end }}{{ end }}
+  {{ if $app.global }}{{ $parts = $parts | append "global worldwide" }}{{ end }}
+  {{ if $app.requires_play_services }}{{ $parts = $parts | append "play services" }}{{ end }}
+  {{/* Only countries with a report. Including the unreported ones would repeat
+       "unknown" once per country per app, which is noise rather than signal. */}}
+  {{ range $app.by_country }}{{ if .reported }}{{ $parts = $parts | append .verdict .fixability .blocked_reason }}{{ end }}{{ end }}
+  {{ range $app.reports }}{{ with .workaround }}{{ $parts = $parts | append . }}{{ end }}{{ end }}
+  {{/* Alternatives are searchable too, so "net banking" finds the bank entries
+       that offer a website fallback. */}}
+  {{ range $app.alternatives }}{{ $parts = $parts | append .label .detail }}{{ end }}
+
+  {{ $records = $records | append (dict
+    "title" $app.title
+    "url" (printf "/app/%s/" $slug | relURL)
+    "subtitle" $subtitle
+    "developer" $app.developer
+    "package" $app.package
+    "service_type" $typeLabel
+    "badges" $badges
+    "haystack" (lower (delimit $parts " "))
+  ) }}
+{{ end }}
+
+{{ return (dict
+  "generated" $derived.generated
+  "count" (len $records)
+  "apps" (sort $records "title")
+) }}

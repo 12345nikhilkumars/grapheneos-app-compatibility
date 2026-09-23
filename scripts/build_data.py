@@ -126,6 +126,7 @@ def main() -> int:
             "countries": own,
             "global": is_global,
             "requires_play_services": bool(meta.get("requires_play_services")),
+            "alternatives": meta.get("alternatives") or [],
             "by_country": {code: derive(reports, code, cutoff) for code in codes},
             "reports": reports,
         }

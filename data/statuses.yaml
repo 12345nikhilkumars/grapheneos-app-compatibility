@@ -1,7 +1,9 @@
 # Status and enum reference.
 #
 # This file drives display only. Validation uses schemas/app.schema.json, which
-# is the source of truth for what is allowed. Keep the two in step.
+# is the source of truth for what is allowed. Keep the two in step: validate.py
+# asserts that every enum here matches the schema exactly, so an addition to one
+# without the other fails the build.
 
 result:
   - value: works
@@ -15,7 +17,7 @@ result:
   - value: works-degraded
     label: Works, degraded
     tone: warn
-    summary: Runs, but a feature is missing or capped. Usually DRM resolution or push notifications.
+    summary: Runs, but a feature is missing or capped. Usually push notifications, or one feature inside an otherwise working app.
   - value: broken
     label: Broken
     tone: bad
@@ -32,33 +34,43 @@ result:
 blocked_reason:
   - value: play-integrity
     label: Play Integrity
-    summary: The app checks Play Integrity and fails. Locking the bootloader does not help.
+    tone: bad
+    summary: The app calls the Play Integrity API and fails the device or strong integrity verdict. Locking the bootloader does not help. This is the usual reason payment apps fail.
   - value: safetynet
     label: SafetyNet
-    summary: The older attestation API. Same failure, older mechanism.
+    tone: bad
+    summary: The older attestation API. Same failure, older mechanism. Superseded by Play Integrity, but some apps still call it.
   - value: custom-firmware-detection
     label: Custom firmware detection
-    summary: The app notices the OS is not stock and refuses to run, without naming an API.
+    tone: bad
+    summary: The app checks the operating system itself rather than calling an attestation API, and refuses to run. Locking the bootloader does not satisfy this kind of check.
   - value: hardware-attestation
     label: Hardware attestation
-    summary: Fails a hardware-backed key attestation. Not bypassable.
+    tone: bad
+    summary: Fails a hardware-backed key attestation against Google's servers. Not bypassable locally.
   - value: drm
     label: DRM
-    summary: Widevine L3 only, so protected content is capped at low resolution.
+    tone: warn
+    summary: Protected content is capped at low resolution. GrapheneOS does support Widevine L1 on Pixels, so a cap means the provisioning path is broken rather than that L1 is unavailable — check it before assuming this is permanent.
   - value: play-services-required
     label: Play Services required
-    summary: The app requires Google Play Services and will not run without it.
+    tone: warn
+    summary: The app requires Google Play Services and will not run without it. Sandboxed Play Services is usually enough.
   - value: push-delivery
     label: Push delivery
-    summary: Push notifications arrive late or not at all, usually because the app is being battery-optimised.
+    tone: warn
+    summary: Push notifications arrive late or not at all. Usually battery optimisation suspending the sandboxed Play Services process rather than the app itself.
   - value: carrier-provisioning
     label: Carrier provisioning
+    tone: warn
     summary: Fails because the carrier has not provisioned the device. Usually affects VoLTE, VoWiFi or eSIM.
   - value: none
     label: None
+    tone: good
     summary: No blocker. Used with a working result.
   - value: unknown
     label: Unknown
+    tone: muted
     summary: It failed and nobody knows why yet.
 
 fixability:
@@ -69,7 +81,7 @@ fixability:
   - value: not-possible
     label: Not fixable
     tone: bad
-    summary: No workaround exists, and none is plausible.
+    summary: No workaround exists, and none is plausible. Reserve this for a check that is deliberate and enforced on the server side.
   - value: possible-with-steps
     label: Fixable with steps
     tone: warn
@@ -77,7 +89,7 @@ fixability:
   - value: possible-via-workaround
     label: Use an alternative
     tone: warn
-    summary: The app cannot work, but another app can do the same job.
+    summary: The app cannot work, but another app, a website, or a piece of hardware can do the same job.
   - value: unknown
     label: Unknown
     tone: muted
@@ -86,10 +98,49 @@ fixability:
 tier:
   - value: maintainer
     label: Verified by maintainer
+    tone: good
     summary: Reproduced and confirmed by a maintainer.
   - value: trusted
     label: Verified by contributor
+    tone: good
     summary: Reproduced independently by a trusted contributor.
   - value: community
     label: Community report
+    tone: warn
     summary: One person's report. Not reproduced.
+  - value: imported
+    label: Imported, not reproduced
+    tone: info
+    summary: Taken from a public source rather than tested by anyone here. Treat it as a lead, not a finding.
+
+# What kind of thing the alternative is. Drives the small label beside it.
+alternative_kind:
+  - value: browser
+    label: Website
+    summary: The vendor's own website in a browser, desktop or mobile.
+  - value: app
+    label: Another app
+    summary: A different app that does the same job.
+  - value: hardware
+    label: Hardware
+    summary: A physical card, watch, or other device that does the job instead of the phone.
+  - value: phone
+    label: Phone or SMS
+    summary: A phone call, IVR menu, or SMS command.
+  - value: in-person
+    label: In person
+    summary: A branch, agent, or counter.
+  - value: other
+    label: Other
+    summary: Anything that does not fit the other kinds.
+
+# How much of the app's job the alternative actually covers.
+alternative_covers:
+  - value: full
+    label: Replaces it
+    tone: good
+    summary: The alternative does everything the app did.
+  - value: partial
+    label: Partial
+    tone: warn
+    summary: The alternative covers some of it. The gap is stated, because "use the website instead" is misleading when the website cannot make a payment.
