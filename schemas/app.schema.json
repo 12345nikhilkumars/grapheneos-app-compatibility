@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://grapheneos-info-board.example/schemas/app.schema.json",
+  "$id": "https://12345nikhilkumars.github.io/grapheneos-app-compatibility/schemas/app.schema.json",
   "title": "App entry",
   "description": "Frontmatter of a file in content/app/. The body of the file is prose and is not validated here.",
   "type": "object",

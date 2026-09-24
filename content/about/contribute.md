@@ -64,4 +64,4 @@ By contributing, you agree to your prose and data being published under CC BY-SA
 
 The complete contributing guide, including the review checklist, lives in the repository.
 
-[Read CONTRIBUTING.md →](https://github.com/example/grapheneos-info-board/blob/main/CONTRIBUTING.md)
+[Read CONTRIBUTING.md →](https://github.com/12345nikhilkumars/grapheneos-app-compatibility/blob/main/CONTRIBUTING.md)

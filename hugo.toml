@@ -1,4 +1,4 @@
-baseURL = "https://grapheneos-info-board.example/"
+baseURL = "https://12345nikhilkumars.github.io/grapheneos-app-compatibility/"
 defaultContentLanguage = "en"
 title = "GrapheneOS Info Board"
 enableRobotsTXT = true
@@ -7,7 +7,7 @@ disableKinds = ["taxonomy", "term"]
 
 [params]
   description = "Which apps work on GrapheneOS, and whether they can be fixed."
-  repo = "https://github.com/example/grapheneos-info-board"
+  repo = "https://github.com/12345nikhilkumars/grapheneos-app-compatibility"
   staleAfterDays = 180
 
 [markup]

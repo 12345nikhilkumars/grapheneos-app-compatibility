@@ -36,7 +36,7 @@
   <ul class="country-grid">
     {{ range $derived.countries }}
       <li class="country-card{{ if .priority }} country-card--priority{{ end }}">
-        <a href="{{ printf "/apps/%s/" (lower .code) | relURL }}">
+        <a href="{{ printf "apps/%s/" (lower .code) | relURL }}">
           <span class="country-card__name">{{ .name }}</span>
           <span class="country-card__meta">
             {{ .total }} app{{ if ne (int .total) 1 }}s{{ end }} tracked
@@ -56,6 +56,6 @@
 <section class="block">
   <h2>Recent reports</h2>
   <p class="block__note">Generated {{ $derived.generated }}. {{ $derived.summary.reports }} reports across {{ $derived.summary.apps }} apps.</p>
-  <p><a href="{{ "/apps/" | relURL }}">Browse all apps →</a></p>
+  <p><a href="{{ "apps/" | relURL }}">Browse all apps →</a></p>
 </section>
 {{ end }}

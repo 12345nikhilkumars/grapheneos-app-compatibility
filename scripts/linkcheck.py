@@ -11,6 +11,13 @@ Parsed with html.parser rather than a regex, because Hugo's minifier rewrites
 `href="/apps/"` to `href=/apps/` and a regex looking for quotes silently finds
 nothing and reports success. That mistake was made once already.
 
+Root-relative links carry the site's base path but the output directory does
+not. Hugo writes `public/apps/index.html` while the link on the page reads
+`/grapheneos-app-compatibility/apps/`. The base path is read from `hugo.toml`
+and stripped before resolving. Without that, every internal link reports as
+broken the moment the site is served from a project page rather than a domain
+root.
+
 Usage:
     scripts/linkcheck.py [directory]      # defaults to public/
 """
@@ -18,11 +25,27 @@ Usage:
 from __future__ import annotations
 
 import sys
+import tomllib
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 SKIP_SCHEMES = ("http", "https", "mailto", "tel", "data", "javascript")
+
+
+def site_base_path(root: Path) -> str:
+    """The path component of the configured baseURL, e.g. "/sub/" or "/"."""
+    for candidate in (root.parent / "hugo.toml", root / "hugo.toml"):
+        if not candidate.is_file():
+            continue
+        try:
+            config = tomllib.loads(candidate.read_text(encoding="utf-8"))
+        except (OSError, tomllib.TOMLDecodeError):
+            continue
+        path = urlsplit(str(config.get("baseURL", ""))).path
+        if path and path != "/":
+            return path if path.endswith("/") else path + "/"
+    return "/"
 
 
 class LinkCollector(HTMLParser):
@@ -52,7 +75,7 @@ class LinkCollector(HTMLParser):
         self.handle_starttag(tag, attrs)
 
 
-def target_for(root: Path, page: Path, href: str) -> Path | None:
+def target_for(root: Path, page: Path, href: str, base_path: str = "/") -> Path | None:
     """Resolve an href to a file on disk, or None if it is not our problem."""
     parts = urlsplit(href)
 
@@ -65,9 +88,17 @@ def target_for(root: Path, page: Path, href: str) -> Path | None:
     if not path:
         return None  # pure fragment, handled by the caller
 
-    # Root-relative links are relative to the output directory, not the page.
-    base = root if path.startswith("/") else page.parent
-    resolved = (base / path.lstrip("/")).resolve()
+    if path.startswith("/"):
+        # Root-relative links are relative to the output directory, not the
+        # page. Strip the site's base path first: the deployed site sits under
+        # it, but the output directory does not have a matching subdirectory.
+        if base_path != "/" and path.startswith(base_path):
+            path = "/" + path[len(base_path):]
+        directory = root
+    else:
+        directory = page.parent
+
+    resolved = (directory / path.lstrip("/")).resolve()
 
     if path.endswith("/"):
         return resolved / "index.html"
@@ -91,6 +122,7 @@ def main() -> int:
 
     checked = 0
     broken: list[tuple[Path, str, str]] = []
+    base_path = site_base_path(root)
 
     # First pass: collect the ids each page defines, for fragment checking.
     ids_by_page: dict[Path, set[str]] = {}
@@ -104,7 +136,7 @@ def main() -> int:
 
     for page in pages:
         for href in collectors[page].links:
-            target = target_for(root, page, href)
+            target = target_for(root, page, href, base_path)
             if target is None:
                 continue
 

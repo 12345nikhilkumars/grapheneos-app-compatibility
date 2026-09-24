@@ -29,7 +29,7 @@
   <a class="skip" href="#main">Skip to content</a>
 
   <header class="site-header">
-    <a class="brand" href="{{ "/" | relURL }}">
+    <a class="brand" href="{{ site.Home.RelPermalink }}">
       <span class="brand__mark" aria-hidden="true"></span>
       GrapheneOS Info Board
     </a>
@@ -67,10 +67,10 @@
     </div>
 
     {{ $nav := slice
-      (dict "href" "/apps/" "label" "Apps")
-      (dict "href" "/about/methodology/" "label" "Methodology")
-      (dict "href" "/about/contribute/" "label" "Contribute")
-      (dict "href" "/about/" "label" "About")
+      (dict "href" "apps/" "label" "Apps")
+      (dict "href" "about/methodology/" "label" "Methodology")
+      (dict "href" "about/contribute/" "label" "Contribute")
+      (dict "href" "about/" "label" "About")
     }}
     <nav class="site-nav" aria-label="Main">
       {{ range $nav }}

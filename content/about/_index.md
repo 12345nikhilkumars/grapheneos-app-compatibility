@@ -16,4 +16,4 @@ Some seed entries were imported from public forum threads and issue trackers rat
 
 ## Reading an entry
 
-See [Methodology](/about/methodology/) for what each status means, how confidence is counted, and why an old entry is worth less than a recent one.
+See [Methodology]({{< relref "/about/methodology" >}}) for what each status means, how confidence is counted, and why an old entry is worth less than a recent one.

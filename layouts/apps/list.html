@@ -16,7 +16,7 @@
     <ul class="country-grid">
       {{ range where $derived.countries "region" $region }}
         <li class="country-card{{ if .priority }} country-card--priority{{ end }}">
-          <a href="{{ printf "/apps/%s/" (lower .code) | relURL }}">
+          <a href="{{ printf "apps/%s/" (lower .code) | relURL }}">
             <span class="country-card__name">{{ .name }}</span>
             <span class="country-card__meta">
               {{ .total }} app{{ if ne (int .total) 1 }}s{{ end }} tracked

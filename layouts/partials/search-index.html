@@ -83,7 +83,7 @@
 
   {{ $records = $records | append (dict
     "title" $app.title
-    "url" (printf "/app/%s/" $slug | relURL)
+    "url" (printf "app/%s/" $slug | relURL)
     "subtitle" $subtitle
     "developer" $app.developer
     "package" $app.package

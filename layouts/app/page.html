@@ -32,12 +32,12 @@
 {{ $works := eq $worst "works" }}
 
 <nav class="crumbs" aria-label="Breadcrumb">
-  <a href="{{ "/apps/" | relURL }}">Apps</a>
+  <a href="{{ "apps/" | relURL }}">Apps</a>
   {{ with $worstCode }}
     <span aria-hidden="true">/</span>
-    <a href="{{ printf "/apps/%s/" (lower $worstCode) | relURL }}">{{ $worstName }}</a>
+    <a href="{{ printf "apps/%s/" (lower $worstCode) | relURL }}">{{ $worstName }}</a>
     <span aria-hidden="true">/</span>
-    <a href="{{ printf "/apps/%s/%s/" (lower $worstCode) $app.service_type | relURL }}">{{ $app.service_type }}</a>
+    <a href="{{ printf "apps/%s/%s/" (lower $worstCode) $app.service_type | relURL }}">{{ $app.service_type }}</a>
   {{ end }}
 </nav>
 
