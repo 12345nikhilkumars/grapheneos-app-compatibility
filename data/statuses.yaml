@@ -117,6 +117,22 @@ tier:
     tone: info
     summary: Taken from a public source rather than tested by anyone here. Treat it as a lead, not a finding.
 
+# Which user profile a report was filed from. GrapheneOS keeps profiles
+# isolated from one another, so an app that works in the owner profile is not
+# thereby known to work in a secondary one. The profile is part of the evidence,
+# not a detail of it. There is deliberately no row for a null profile: an
+# unreported profile renders as nothing at all.
+profile:
+  - value: owner
+    label: Owner profile
+    summary: The device owner's own profile.
+  - value: owner-private-space
+    label: Private space
+    summary: The private space inside the owner profile.
+  - value: secondary
+    label: Secondary profile
+    summary: A secondary user profile.
+
 # What kind of thing the alternative is. Drives the small label beside it.
 alternative_kind:
   - value: browser

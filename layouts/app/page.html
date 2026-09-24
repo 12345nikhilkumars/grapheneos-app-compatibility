@@ -180,8 +180,23 @@
               <div class="report__head">
                 <time datetime="{{ .date }}">{{ .date }}</time>
                 {{ with .build }}<code>build {{ . }}</code>{{ end }}
-                {{ with .device }}<span>{{ . }}</span>{{ end }}
-                {{ with .profile }}<span>{{ . }} profile</span>{{ end }}
+                {{/* Device and profile are both slugs in the frontmatter, so each
+                     is resolved to what a reader should see: the device's display
+                     name from data/devices.yaml, and the profile's label from
+                     data/statuses.yaml. A value with no matching row falls through
+                     as the raw slug, which is visible enough to notice and fix. */}}
+                {{ with .device }}
+                  {{ $label := . }}
+                  {{ range where hugo.Data.devices "slug" . }}{{ $label = .name }}{{ end }}
+                  <span>{{ $label }}</span>
+                {{ end }}
+                {{ with .profile }}
+                  {{ $label := . }}
+                  {{ range index hugo.Data.statuses "profile" }}
+                    {{ if eq .value $label }}{{ $label = .label }}{{ end }}
+                  {{ end }}
+                  <span>{{ $label }}</span>
+                {{ end }}
                 {{ with .play }}<span>{{ . }} Play</span>{{ end }}
                 {{ with .carrier }}<span>{{ . }}</span>{{ end }}
               </div>
