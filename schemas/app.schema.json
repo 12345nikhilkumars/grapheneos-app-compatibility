@@ -172,7 +172,7 @@
         },
         "profile": {
           "type": ["string", "null"],
-          "enum": ["owner", "secondary", null],
+          "enum": ["owner", "owner-private-space", "secondary", null],
           "description": "Which user profile the app was tested in."
         },
         "country": {
