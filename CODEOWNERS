@@ -1,11 +1,11 @@
 # Default reviewers for everything.
-*       @maintainer
+*       @12345nikhilkumars
 
 # Data and schema changes need a maintainer review before merge.
-/schemas/       @maintainer
-/data/          @maintainer
-/scripts/       @maintainer
-/.github/       @maintainer
+/schemas/       @12345nikhilkumars
+/data/          @12345nikhilkumars
+/scripts/       @12345nikhilkumars
+/.github/       @12345nikhilkumars
 
 # App entries are the community surface. Reviewers here decide trust tiers.
-/content/app/   @maintainer
+/content/app/   @12345nikhilkumars
