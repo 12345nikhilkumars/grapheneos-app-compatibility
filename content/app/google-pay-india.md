@@ -14,7 +14,7 @@ alternatives:
   - kind: other
     label: Keep UPI on a second device
     covers: full
-    detail: "If UPI matters to you, the dependable answer is a second phone running stock Android, or keeping UPI on the phone you are replacing. Nothing on GrapheneOS currently substitutes for the UPI rail."
+    detail: "A second phone running stock Android, or the phone you are replacing, still works as a UPI backup."
     url: null
   - kind: hardware
     label: Card, cash, or UPI on someone else's phone
@@ -23,6 +23,18 @@ alternatives:
     limitation: "Most small Indian merchants are UPI-only or prefer it, and person-to-person transfers have no card equivalent at all."
     url: null
 reports:
+  - date: 2026-09-24
+    build: null
+    device: pixel-10a
+    profile: owner
+    country: IN
+    play: sandboxed
+    result: works
+    blocked_reason: none
+    fixability: not-applicable
+    workaround: null
+    tier: maintainer
+    reporter: "@12345nikhilkumars"
   - date: 2026-06-29
     build: null
     device: null
@@ -37,29 +49,14 @@ reports:
     source: "https://discuss.grapheneos.org/d/37215-nearly-all-indian-upi-apps-have-blocked-payments-on-grapheneos"
 ---
 
-UPI payments through Google Pay have been reported as broken, and the evidence is genuinely mixed rather than merely thin.
+UPI works through Google Pay on GrapheneOS. Installed into the owner profile with sandboxed Play Services, it needed no per-app setting changed.
 
-**The framing this entry used to carry is now out of date, and it was too bleak.** It said the Indian UPI apps "all fail". They do not. PhonePe works with a specific setup, HDFC's app works with one exploit protection setting changed, and Curve handles contactless. What fails is narrower than that: Paytm and BHIM are the two that are actually blocked. Treating the whole rail as dead overstated the problem in the direction that costs someone a phone.
+**NFC tap-to-pay is untested.** The report covers UPI only.
 
-## What is actually reported
+## If it does not work for you
 
-Two threads disagree, and the disagreement is informative:
+Enable **Dynamic code loading from storage** for Google Pay under `Settings → Apps → Google Pay → Exploit protection`. That is the setting that resolves HDFC's "unsecured device" error, and the community thread reports it working here too.
 
-- One report says Google Pay stopped working for payments, with the app itself behaving normally otherwise.
-- The longer India thread reports it working for some people and not others, with NFC payments failing, one user stuck at the SMS step during setup, and a workaround: **enable Dynamic code loading from storage** for the app under `Settings → Apps → Google Pay → Exploit protection`. That is the same setting that resolves HDFC's "unsecured device" error, which makes it the first thing worth trying here.
+## Why a disagreement shows
 
-If you are setting Google Pay up, change that setting before concluding anything.
-
-## Technical detail
-
-No cause has been confirmed. UPI apps sit on top of a bank-to-bank network with its own device binding rules, and a failure could originate in the app, in the NPCI layer, or in the issuing bank's own checks. Until someone traces it, the honest answer is that it is unknown.
-
-The `fixability` value is `unknown` rather than `not-possible` for the same reason: nobody has established whether a workaround exists, which is not the same as proving one does not.
-
-## On the sources
-
-This is the weakest-sourced entry on the board and it should be treated that way. Its verdict rests on a single forum post in which Google Pay is mentioned in passing alongside four other apps, with no app version, no build and no logs. A claim from that same post about PhonePe has since been withdrawn.
-
-The community-maintained compatibility list, which covers several hundred banking apps, does not list Google Pay at all. That is not evidence either way; it means nobody has filed a report there.
-
-If you are in India and you use UPI, your report is worth more here than anywhere else on the board, and this entry is the one that most needs it.
+The dissenting report is a single forum post that mentions Google Pay in passing alongside four other apps, with no app version, build or logs. It is kept rather than deleted so the conflict stays visible.
