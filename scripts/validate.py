@@ -76,6 +76,7 @@ def check_enum_drift(report: Report, schema: dict) -> None:
         ("blocked_reason", reference.statuses["blocked_reason"], report_def["blocked_reason"]["enum"]),
         ("fixability", reference.statuses["fixability"], report_def["fixability"]["enum"]),
         ("tier", reference.statuses["tier"], report_def["tier"]["enum"]),
+        ("profile", reference.statuses["profile"], report_def["profile"]["enum"]),
         ("alternative_kind", reference.statuses["alternative_kind"], alt_def["kind"]["enum"]),
         ("alternative_covers", reference.statuses["alternative_covers"], alt_def["covers"]["enum"]),
     ]
@@ -83,7 +84,10 @@ def check_enum_drift(report: Report, schema: dict) -> None:
     for field, source, schema_enum in pairs:
         # service_types is keyed by slug; the status files are lists of rows.
         expected = sorted(source) if isinstance(source, dict) else sorted(row["value"] for row in source)
-        actual = sorted(schema_enum)
+        # A nullable enum carries null beside its real values. Null is the absence
+        # of a value rather than one of them, so it has no row in data/ and is
+        # dropped here instead of being represented by a placeholder entry.
+        actual = sorted(value for value in schema_enum if value is not None)
         if actual == expected:
             continue
 
