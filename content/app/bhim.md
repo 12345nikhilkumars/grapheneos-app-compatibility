@@ -89,7 +89,6 @@ BHIM has worked on GrapheneOS and stopped, more than once. The oscillation is th
 - **October 2025.** Works again. The route back in: install Play Services, give it SMS but not network, log in, then uninstall Play Services. The community tracker removes its "not compatible" label.
 - **October 2025, later.** Version `253000082` starts refusing to run with developer options enabled, which is a build-property check, and one that forces a reboot to work around.
 - **March 2026.** Onboarding fails on a fresh install on a Pixel 7 with "We are unable to onboard you at this time". The reporter notes it is also checking Play Integrity.
-- **July 2026.** Tested two ways: with secure app spawning on, it reports "rooting detected"; with exploit protection compatibility mode on, it launches but fails at onboarding.
 - **September 2026.** Confirmed broken.
 
 ## What the failures actually are

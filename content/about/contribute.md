@@ -4,7 +4,7 @@ title: Contribute
 
 Everything on this site is a markdown file in a public repository, and every change is a pull request.
 
-## The one rule
+## There is only one rule
 
 **Test it yourself.** A report is a claim about what happened on a real device running a real GrapheneOS build. If you have not run the app, do not submit a report about it.
 
@@ -40,7 +40,7 @@ An app with no reports yet is a valid entry. It shows as unknown, which is more 
 
 ## Getting the fields right
 
-**`blocked_reason`**: only set it if you know why it failed. A wrong reason is worse than an honest gap.
+**`blocked_reason`**: only set it if you know why it failed. A wrong reason is worse than an honest empty field.
 
 | What you saw | Likely reason |
 |---|---|

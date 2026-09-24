@@ -2,13 +2,13 @@
 title: Home
 ---
 
-The question this board answers is not whether GrapheneOS is good. It is whether **your apps will work**, and if they will not, **whether anything can be done about it**.
+The question this board answers is not whether GrapheneOS is good. It is whether **your choice of apps will work**, and if they will not, **whether anything can be done about it**.
 
-Installation is not covered here. It is straightforward, and it is already documented well elsewhere.
+Installation is not covered here. It is straightforward, and it is already documented well [here](https://grapheneos.org/install/).
 
 ## Why this exists
 
-Search for any app plus "GrapheneOS" and you will find one of three things: an official answer too technical to act on, a forum thread from two years ago, or a machine-written page that confidently contradicts both.
+Search for any app plus "GrapheneOS" and you will find one of these: a forum thread from two years ago, which is stale and aurora store which only lists whether an app needs play services or not.
 
 What none of them tell you is the thing that actually matters. Not *"this app is broken"* but **why it broke**, and **whether it can be fixed**. A status without a reason is not something you can act on.
 

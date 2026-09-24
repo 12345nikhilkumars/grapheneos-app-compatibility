@@ -47,7 +47,7 @@ blocked_reason:
   - value: exploit-protection
     label: Exploit protection
     tone: warn
-    summary: One of GrapheneOS's own hardening features is what the app trips over, not an attestation check. Usually fixed per app under Settings → Apps → the app → Exploit protection, by allowing Native code debugging or Dynamic code loading, or by disabling secure app spawning system-wide. The last of those costs real security, so read what it does before turning it off.
+    summary: One of GrapheneOS's own hardening features is what the app trips over, not an attestation check. Usually fixed per app under Settings → Apps → the app → Exploit protection, by allowing Native code debugging or Dynamic code loading. The last of those costs real security, so read what it does before turning it off.
   - value: hardware-attestation
     label: Hardware attestation
     tone: bad
