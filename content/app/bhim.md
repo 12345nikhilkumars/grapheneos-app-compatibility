@@ -74,37 +74,14 @@ reports:
     source: "https://github.com/PrivSec-dev/banking-apps-compat-report/issues/135"
 ---
 
-BHIM does not work. It is the NPCI's own UPI app, so its behaviour says more about the UPI rail than the behaviour of any third-party app does.
+BHIM does not work, and the reason is on the record rather than inferred: BHIM support told a user that registration could not be completed because the device **"does not meet the security standards mandated by the Reserve Bank of India"**, and advised using another device.
 
-**This entry has been corrected twice, and both corrections were in the same direction: from speculation towards evidence.** It used to infer from BHIM's failures that the restriction "sits at the network level". It turns out that is closer to right than the reasoning deserved, because there is now an on-the-record statement: BHIM's own support team told a user that registration could not be completed because the device **"does not meet the security standards mandated by the Reserve Bank of India"**, and advised using a different device.
+## Two different checks
 
-That is a named policy from a named regulator, not a guess about an app's behaviour. It is the strongest kind of evidence this board can carry.
+**"Rooting detected"** is the app inspecting the device itself, and relocking the bootloader does not satisfy it. The onboarding failure that follows looks like server-side enforcement, which fits the RBI reply: the decision is not made on the phone.
 
-## The pattern
+Because the requirement is regulatory rather than one bank's risk appetite, no local change is likely to settle this permanently. It has flipped before, though: working through 2023 and 2024, broken in June 2025, working again in October 2025 by installing Play Services, giving it SMS but not network access, logging in, then uninstalling it. Worth watching rather than treating as final.
 
-BHIM has worked on GrapheneOS and stopped, more than once. The oscillation is the point.
+## Before you install it
 
-- **Through 2023 and 2024.** Works, including with no Play Services at all, though QR scanning needed Play Services to download its detection patterns.
-- **June 2025.** Breaks. A community member traces it to version 4.0.2 enforcing the Play Integrity API. BHIM support replies with the RBI standards line above.
-- **October 2025.** Works again. The route back in: install Play Services, give it SMS but not network, log in, then uninstall Play Services. The community tracker removes its "not compatible" label.
-- **October 2025, later.** Version `253000082` starts refusing to run with developer options enabled, which is a build-property check, and one that forces a reboot to work around.
-- **March 2026.** Onboarding fails on a fresh install on a Pixel 7 with "We are unable to onboard you at this time". The reporter notes it is also checking Play Integrity.
-- **September 2026.** Confirmed broken.
-
-## What the failures actually are
-
-Two different checks are in play, and telling them apart matters.
-
-The **"rooting detected"** message is the app inspecting the device itself. It is not Play Integrity, and it is not satisfied by relocking the bootloader. It fires before the app gets far enough to fail on anything else.
-
-The **onboarding failure**, the one that says "we are unable to onboard you at this time", happens after that check is satisfied, and looks like server-side enforcement. That is consistent with the RBI standards reply: the decision is not being made on the phone.
-
-## Technical detail
-
-Because the requirement is regulatory rather than a bank's own risk appetite, no local change is likely to settle this permanently. That is a stronger claim than the earlier version of this entry could make, and it is now supported by a vendor statement rather than inference.
-
-The workarounds that have worked historically are worth knowing even though none is currently reported working: the Play Services install-then-uninstall trick from October 2025, and turning developer options off for the `253000082` build. If BHIM matters to you, the report history above is the thing to watch: it has flipped before, and each flip is dated.
-
-## A note on the app itself
-
-BHIM is worth using on privacy grounds only if you have not looked at what it does. Contributors to the community tracker have documented extensive behavioural analytics on spending, added from around version 3.8.7, with no way to opt out. That is a separate question from whether it runs, and it is not one this board is set up to score, but it belongs next to the recommendation, not buried.
+Tracker contributors have documented extensive behavioural analytics on spending, added around version 3.8.7, with no opt-out. Separate from whether it runs, but it belongs here.
