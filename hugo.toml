@@ -8,7 +8,6 @@ disableKinds = ["taxonomy", "term"]
 [params]
   description = "Which apps work on GrapheneOS, and whether they can be fixed."
   repo = "https://github.com/12345nikhilkumars/grapheneos-app-compatibility"
-  staleAfterDays = 180
 
 [markup]
   [markup.goldmark.renderer]

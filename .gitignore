@@ -16,3 +16,4 @@ __pycache__/
 
 # Assistant workspace data, not part of the site
 .workbuddy-ai/
+CODEBUDDY.md

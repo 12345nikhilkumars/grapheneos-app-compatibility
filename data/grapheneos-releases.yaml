@@ -1,10 +1,15 @@
 # GrapheneOS release reference.
 #
-# Source: https://grapheneos.org/releases. Verified 2026-09-23.
+# Source: https://grapheneos.org/releases. Verified 2026-09-25.
 #
 # The build string is YYYYMMDDNN, where the date part is the source tag date.
 # Stable channel rollout happens after alpha and beta, so the tag date is
 # slightly earlier than the date a user would have received the update.
+#
+# Two variants can share a date: NN=00 is the regular release and NN=01 is the
+# opt-in security preview carrying upcoming Android Security Bulletin patches.
+# The preview is often absent from this list, so validation accepts a <date>01
+# build when its <date>00 sibling is present. Any other suffix is a typo.
 #
 # Validation checks the format and plausibility of a build string. A build not
 # listed here produces a warning, not an error: releases ship every few days
@@ -21,6 +26,10 @@
   tag_date: 2023-10-23
   android: "14"
   note: "Fixed Widevine L1 support on Android 14, which had broken in 2023100900. Cited by the Netflix entry."
+- build: "2026091901"
+  tag_date: 2026-09-19
+  android: "17"
+  note: "Security preview variant of 2026091900, opt-in and carrying upcoming Android Security Bulletin patches. Cited by the DigiLocker entry."
 - build: "2026091900"
   tag_date: 2026-09-19
   android: "17"

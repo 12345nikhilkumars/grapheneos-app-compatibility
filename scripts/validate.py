@@ -20,6 +20,7 @@ import json
 import os
 import re
 import sys
+import tomllib
 from datetime import date, datetime
 
 from jsonschema import Draft202012Validator, FormatChecker
@@ -32,6 +33,21 @@ GITHUB = os.environ.get("GITHUB_ACTIONS") == "true"
 BUILD_RE = re.compile(r"^(\d{4})(\d{2})(\d{2})(\d{2})$")
 
 WORKAROUND_REQUIRED = {"possible-with-steps", "possible-via-workaround"}
+
+HUGO_TOML = lib.ROOT / "hugo.toml"
+LAYOUTS = lib.ROOT / "layouts"
+
+# Params with no template reader on purpose. This is a pressure valve, not a
+# dumping ground: a key belongs here only when there is a reason it must exist
+# unread, and the reason belongs in a comment beside it.
+UNUSED_PARAMS: set[str] = set()
+
+# Where the real value lives when a param duplicates another authority. A dead
+# param is bad; a second copy of a live constant is worse, because editing it
+# looks like it should work. Naming the authority makes the error actionable.
+PARAM_AUTHORITIES = {
+    "staleAfterDays": "lib.py:STALE_AFTER_DAYS",
+}
 
 
 class Report:
@@ -104,6 +120,58 @@ def check_enum_drift(report: Report, schema: dict) -> None:
         )
 
 
+def check_hugo_params(report: Report) -> None:
+    """Every [params] key in hugo.toml must be read by a template.
+
+    A param nothing reads is a trap. hugo.toml is the obvious place to change a
+    site-wide constant, so a dead one invites an edit that silently does
+    nothing. `staleAfterDays` was exactly that: a second copy of
+    STALE_AFTER_DAYS in lib.py, read by nobody. Re-adding it fails here.
+    """
+    if not HUGO_TOML.exists():
+        return
+
+    text = HUGO_TOML.read_text(encoding="utf-8")
+    params = tomllib.loads(text).get("params") or {}
+
+    templates = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in sorted(LAYOUTS.rglob("*"))
+        # Hugo ignores dotfiles; so do we, or a stray .DS_Store would be read
+        # as a template and fail to decode.
+        if path.is_file() and not path.name.startswith(".")
+    )
+
+    for key in params:
+        if key in UNUSED_PARAMS:
+            continue
+        # Hugo reaches a param through several spellings. Cover them all so a
+        # live key is not flagged just because the accessor is unusual.
+        accessors = [
+            rf"(?:site\.params|\.site\.params|\.params|params)\s*\.\s*{re.escape(key)}\b",
+            rf"index\s+site\.params\s+[\"']{re.escape(key)}[\"']",
+        ]
+        if any(re.search(pattern, templates, re.IGNORECASE) for pattern in accessors):
+            continue
+
+        authority = PARAM_AUTHORITIES.get(key)
+        hint = f" The authority for this value is {authority}." if authority else ""
+        report.error(
+            HUGO_TOML,
+            f"param '{key}' is not referenced by any template, so changing it does "
+            f"nothing.{hint} Remove it, or read it from a template.",
+            _toml_key_line(text, key),
+        )
+
+
+def _toml_key_line(text: str, key: str) -> int | None:
+    """Line number of a key assignment, for the error location."""
+    for offset, line in enumerate(text.splitlines(), 1):
+        if re.match(rf"^\s*[\"']?{re.escape(key)}[\"']?\s*=", line):
+            return offset
+    return None
+
+
 def check_build(report: Report, entry, index: int, build, reference, today: date) -> None:
     line = entry.key_lines.get("reports")
     match = BUILD_RE.match(str(build))
@@ -125,13 +193,33 @@ def check_build(report: Report, entry, index: int, build, reference, today: date
             f"report {index}: build {build} predates GrapheneOS",
             line,
         )
-    elif str(build) not in reference.releases:
+    elif not _build_is_known(build, reference):
         report.warn(
             entry.path,
             f"report {index}: build {build} is not in data/grapheneos-releases.yaml. "
-            "That is expected for recent releases; add it if it is missing.",
+            "That is expected for recent releases; add it if it is missing. A build "
+            "ending in 01 is a security-preview variant and is legitimately absent "
+            "from this list, so before assuming the report is wrong, check "
+            "releases.grapheneos.org/<codename>-stable-security-preview for the "
+            "device's codename (see data/devices.yaml).",
             line,
         )
+
+
+def _build_is_known(build, reference) -> bool:
+    """Whether a cited build is real evidence, not a typo.
+
+    GrapheneOS ships two variants per release date: `<date>00`, the regular
+    release, and `<date>01`, the opt-in security preview carrying upcoming
+    Android Security Bulletin patches. The preview is often left out of the
+    release list, so a report citing one is still first-hand evidence. Only the
+    01 suffix gets this treatment; any other suffix is a likely typo and must
+    keep warning.
+    """
+    build = str(build)
+    if build in reference.releases:
+        return True
+    return build.endswith("01") and build[:-2] + "00" in reference.releases
 
 
 def check_entry(report: Report, entry, validator, reference, today: date) -> None:
@@ -343,6 +431,7 @@ def main() -> int:
     reference = lib.load_reference()
 
     check_enum_drift(report, schema)
+    check_hugo_params(report)
 
     entries, broken = lib.load_entries()
     for path, message in broken:
